@@ -9,7 +9,7 @@ export const anchorCourses: Course[] = [
       "Learn the core concepts of the Anchor framework — program structure, account constraints, PDAs, and cross-program invocations. Build your first Solana program with type-safe macros and declarative validation.",
     shortDescription:
       "Master Anchor's program structure, constraints, PDAs, and CPIs.",
-    thumbnail: "/thumbnails/anchor-fundamentals.jpg",
+    thumbnail: "/thumbnails/anchor-fundamentals.svg",
     trackId: "anchor-development",
     difficulty: 2,
     totalLessons: 15,
@@ -418,7 +418,7 @@ pub struct Config {
       "Master error handling, Token-2022 integration, program composability, and security patterns. Build production-grade Solana programs with robust validation and defense-in-depth.",
     shortDescription:
       "Error handling, Token-2022, composability, and security patterns.",
-    thumbnail: "/thumbnails/advanced-anchor.jpg",
+    thumbnail: "/thumbnails/advanced-anchor.svg",
     trackId: "anchor-development",
     difficulty: 3,
     totalLessons: 12,
@@ -711,7 +711,7 @@ pub struct AuthorityRotated {
       "Write Rust unit tests, TypeScript integration tests with Anchor, and use Mollusk and LiteSVM for fast local execution. Integrate tests into CI pipelines.",
     shortDescription:
       "Rust unit tests, integration tests, Mollusk, LiteSVM, and CI.",
-    thumbnail: "/thumbnails/testing-programs.jpg",
+    thumbnail: "/thumbnails/testing-programs.svg",
     trackId: "anchor-development",
     difficulty: 2,
     totalLessons: 10,

@@ -73,7 +73,7 @@ export default async function CoursesPage({ searchParams }: Props) {
         </div>
 
         {courses.length > 0 ? (
-          <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-5 grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {courses.map((course) => (
               <CourseCard key={course.id} course={course} />
             ))}

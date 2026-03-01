@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#172554"/><stop offset="100%" stop-color="#2563eb"/></linearGradient></defs>
+  <rect width="1200" height="675" fill="url(#g)"/>
+  <circle cx="1010" cy="190" r="170" fill="#93c5fd" opacity="0.2"/>
+  <path d="M760 460c90-120 210-120 300 0" stroke="#bfdbfe" stroke-width="34" fill="none" opacity="0.24"/>
+  <text x="64" y="306" fill="#eff6ff" font-size="58" font-family="ui-sans-serif, system-ui" font-weight="700">Advanced Anchor</text>
+  <text x="64" y="362" fill="#dbeafe" font-size="30" font-family="ui-sans-serif, system-ui">PDAs, CPI, and security patterns</text>
+</svg>

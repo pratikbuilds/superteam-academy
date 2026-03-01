@@ -8,7 +8,7 @@ export const fundamentalsCourses: Course[] = [
     description:
       "Learn the fundamentals of Solana blockchain — from blockchain basics to executing your first transaction on-chain.",
     shortDescription: "Master Solana's account model, architecture, and your first on-chain transaction.",
-    thumbnail: "/thumbnails/intro-solana.jpg",
+    thumbnail: "/thumbnails/intro-solana.svg",
     trackId: "solana-fundamentals",
     difficulty: 1,
     modules: [
@@ -194,7 +194,7 @@ export const fundamentalsCourses: Course[] = [
     description:
       "Master SPL Token and Token-2022 — minting, transferring, and building with token extensions.",
     shortDescription: "SPL Token basics, Token-2022 extensions, and building your own token.",
-    thumbnail: "/thumbnails/token-standards.jpg",
+    thumbnail: "/thumbnails/token-standards.svg",
     trackId: "solana-fundamentals",
     difficulty: 1,
     modules: [
@@ -339,7 +339,7 @@ export const fundamentalsCourses: Course[] = [
     description:
       "Build a Solana dApp from scratch — dev setup, wallet connection, on-chain data, and a polished UI.",
     shortDescription: "End-to-end dApp: wallet integration, RPC queries, and React UI.",
-    thumbnail: "/thumbnails/first-dapp.jpg",
+    thumbnail: "/thumbnails/first-dapp.svg",
     trackId: "solana-fundamentals",
     difficulty: 2,
     modules: [

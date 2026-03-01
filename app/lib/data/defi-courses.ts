@@ -9,7 +9,7 @@ export const defiCourses: Course[] = [
       "Master the core concepts of decentralized finance on Solana — AMMs, liquidity pools, and yield strategies. Build a solid foundation for protocol development.",
     shortDescription:
       "Core DeFi primitives, AMMs, liquidity pools, and yield strategies on Solana.",
-    thumbnail: "/thumbnails/defi-fundamentals.jpg",
+    thumbnail: "/thumbnails/defi-fundamentals.svg",
     trackId: "defi-on-solana",
     difficulty: 2,
     modules: [
@@ -250,7 +250,7 @@ export const defiCourses: Course[] = [
       "Design and implement a decentralized exchange from order book to swap engine. Learn matching logic, liquidity management, and frontend integration with Solana programs.",
     shortDescription:
       "Build a DEX with order book, swap engine, and frontend integration.",
-    thumbnail: "/thumbnails/building-dex.jpg",
+    thumbnail: "/thumbnails/building-dex.svg",
     trackId: "defi-on-solana",
     difficulty: 3,
     modules: [
@@ -544,7 +544,7 @@ export const defiCourses: Course[] = [
       "Build lending and borrowing protocols on Solana. Master interest rate models, collateralization, liquidation engines, and oracle integration for production-grade lending.",
     shortDescription:
       "Lending mechanics, interest models, collateral, liquidation, and oracles.",
-    thumbnail: "/thumbnails/lending-protocols.jpg",
+    thumbnail: "/thumbnails/lending-protocols.svg",
     trackId: "defi-on-solana",
     difficulty: 3,
     modules: [

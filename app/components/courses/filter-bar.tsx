@@ -13,11 +13,7 @@ import {
 } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Button } from "@/components/ui/button";
-import {
-  MagnifyingGlass,
-  SortAscending,
-  X,
-} from "@phosphor-icons/react";
+import { MagnifyingGlass, SortAscending, X } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import type { Track } from "@/lib/data/types";
 
@@ -53,7 +49,9 @@ export function FilterBar({
   const currentQuery = searchParams.get("q") ?? "";
   const currentSort = searchParams.get("sort") ?? "popular";
   const hasActiveFilters =
-    currentDifficulty !== "all" || currentTrack !== "all" || currentQuery !== "";
+    currentDifficulty !== "all" ||
+    currentTrack !== "all" ||
+    currentQuery !== "";
 
   const updateParams = useCallback(
     (key: string, value: string) => {
@@ -83,7 +81,9 @@ export function FilterBar({
   }, [router, pathname, startTransition]);
 
   return (
-    <div className={cn("space-y-4", isPending && "opacity-60 pointer-events-none")}>
+    <div
+      className={cn("space-y-4", isPending && "opacity-60 pointer-events-none")}
+    >
       <div className="relative">
         <MagnifyingGlass className="absolute left-3.5 top-1/2 size-[18px] -translate-y-1/2 text-muted-foreground" />
         <Input
@@ -97,7 +97,7 @@ export function FilterBar({
               300,
             );
           }}
-          className="h-11 rounded-lg bg-muted/40 pl-10 text-sm placeholder:text-muted-foreground/50 focus-visible:bg-background"
+          className="h-11 rounded-lg border-border/80 bg-white pl-10 text-sm shadow-sm placeholder:text-muted-foreground/70 focus-visible:bg-white"
         />
       </div>
 
@@ -128,10 +128,10 @@ export function FilterBar({
             value={currentTrack}
             onValueChange={(value) => updateParams("track", value)}
           >
-            <SelectTrigger className="h-8 w-[170px] cursor-pointer text-xs">
+            <SelectTrigger className="h-8 w-[170px] cursor-pointer border-border/80 bg-white text-xs shadow-sm hover:bg-white">
               <SelectValue placeholder="All Tracks" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="border border-border/80 bg-white shadow-lg">
               <SelectItem value="all" className="cursor-pointer text-xs">
                 All Tracks
               </SelectItem>
@@ -152,11 +152,11 @@ export function FilterBar({
           value={currentSort}
           onValueChange={(value) => updateParams("sort", value)}
         >
-          <SelectTrigger className="h-8 w-[150px] cursor-pointer text-xs">
+          <SelectTrigger className="h-8 w-[150px] cursor-pointer border-border/80 bg-white text-xs shadow-sm hover:bg-white">
             <SortAscending className="size-3.5 text-muted-foreground" />
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="border border-border/80 bg-white shadow-lg">
             {SORT_OPTIONS.map((opt) => (
               <SelectItem
                 key={opt.value}
