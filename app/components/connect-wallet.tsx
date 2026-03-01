@@ -20,7 +20,11 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
-function ConnectButton() {
+type ConnectButtonProps = {
+  className?: string;
+};
+
+function ConnectButton({ className }: ConnectButtonProps) {
   const t = useTranslations("wallet");
   const [open, setOpen] = useState(false);
   const { isConnected } = useWallet();
@@ -64,7 +68,7 @@ function ConnectButton() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button disabled={isConnecting}>
+        <Button disabled={isConnecting} className={className}>
           {isConnecting ? t("connecting") : t("connect")}
         </Button>
       </DialogTrigger>

@@ -52,5 +52,31 @@
       "3": "Advanced"
     },
     "trackFilter": "All Tracks"
+  },
+  "courseDetail": {
+    "connectToEnroll": "Connect your wallet to enroll in this course.",
+    "curriculum": "Curriculum",
+    "reviews": "Reviews",
+    "prerequisite": "Prerequisite",
+    "enroll": "Enroll",
+    "continueLearning": "Continue Learning",
+    "initializeSequence": "Initialize Sequence",
+    "lessonsComplete": "{completed} of {total} lessons complete",
+    "xpToEarn": "{amount} XP to earn",
+    "totalYield": "Total Yield",
+    "time": "~{hours} Hours",
+    "timeMinutes": "~{minutes} min",
+    "difficulty": "Difficulty",
+    "tech": "Tech",
+    "peers": "Peers",
+    "peersActive": "{count} Active",
+    "completionRate": "{percent}% of builders complete this track.",
+    "contributors": "Contributors",
+    "viewAll": "View all",
+    "stuckOnConcept": "Stuck on a concept?",
+    "supportMessage": "Join the Superteam Discord for live debugging support.",
+    "notFoundTitle": "Course not found",
+    "notFoundDescription": "The course you're looking for doesn't exist or has been removed.",
+    "backToCourses": "Back to courses"
   }
 }

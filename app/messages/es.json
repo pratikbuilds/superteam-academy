@@ -52,5 +52,31 @@
       "3": "Avanzado"
     },
     "trackFilter": "Todas las rutas"
+  },
+  "courseDetail": {
+    "connectToEnroll": "Conecta tu billetera para inscribirte en este curso.",
+    "curriculum": "Plan de estudios",
+    "reviews": "Reseñas",
+    "prerequisite": "Requisito previo",
+    "enroll": "Inscribirse",
+    "continueLearning": "Continuar aprendiendo",
+    "lessonsComplete": "{completed} de {total} lecciones completadas",
+    "xpToEarn": "{amount} XP por ganar",
+    "initializeSequence": "Iniciar secuencia",
+    "totalYield": "Rendimiento total",
+    "time": "~{hours} horas",
+    "timeMinutes": "~{minutes} min",
+    "difficulty": "Dificultad",
+    "tech": "Tech",
+    "peers": "Compañeros",
+    "peersActive": "{count} activos",
+    "completionRate": "{percent}% de constructores completan esta ruta.",
+    "contributors": "Contribuidores",
+    "viewAll": "Ver todo",
+    "stuckOnConcept": "¿Atascado en un concepto?",
+    "supportMessage": "Únete al Discord de Superteam para soporte en vivo.",
+    "notFoundTitle": "Curso no encontrado",
+    "notFoundDescription": "El curso que buscas no existe o ha sido eliminado.",
+    "backToCourses": "Volver a cursos"
   }
 }
