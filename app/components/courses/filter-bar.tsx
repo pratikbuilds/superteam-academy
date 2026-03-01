@@ -109,13 +109,18 @@ export function FilterBar({
             onValueChange={(value) => {
               if (value) updateParams("difficulty", value);
             }}
+            className="rounded-xl border border-border/80 bg-card/80 p-0 shadow-sm backdrop-blur-sm"
           >
             {DIFFICULTY_OPTIONS.map((opt) => (
               <ToggleGroupItem
                 key={opt.value}
                 value={opt.value}
                 size="sm"
-                className="cursor-pointer text-xs"
+                className={cn(
+                  "h-8 rounded-lg px-3 text-xs font-semibold tracking-[0.01em] text-muted-foreground",
+                  "hover:bg-accent/80 hover:text-foreground",
+                  "data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:shadow-sm",
+                )}
               >
                 {opt.label}
               </ToggleGroupItem>
