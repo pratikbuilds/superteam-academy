@@ -1,6 +1,61 @@
 import { courses } from "./courses";
 import { tracks } from "./tracks";
-import type { Course, FilterParams, Track } from "./types";
+import type { Course, FilterParams, Lesson, Module, Track } from "./types";
+
+export type LessonWithContext = {
+  lesson: Lesson;
+  lessonIndex: number;
+  lessonIndexInModule: number;
+  moduleIndex: number;
+  module: Module;
+  prevLesson: { id: string; title: string } | null;
+  nextLesson: { id: string; title: string } | null;
+};
+
+export function getLessonBySlug(
+  courseSlug: string,
+  lessonSlug: string
+): LessonWithContext | null {
+  const course = getCourseBySlug(courseSlug);
+  if (!course) return null;
+
+  let flatIndex = 0;
+  for (let mi = 0; mi < course.modules.length; mi++) {
+    const mod = course.modules[mi];
+    for (let li = 0; li < mod.lessons.length; li++) {
+      if (mod.lessons[li].id === lessonSlug) {
+        const prev =
+          flatIndex > 0 ? getLessonAtFlatIndex(course, flatIndex - 1) : null;
+        const next = getLessonAtFlatIndex(course, flatIndex + 1);
+        return {
+          lesson: mod.lessons[li],
+          lessonIndex: flatIndex,
+          lessonIndexInModule: li + 1,
+          moduleIndex: mi,
+          module: mod,
+          prevLesson: prev,
+          nextLesson: next,
+        };
+      }
+      flatIndex++;
+    }
+  }
+  return null;
+}
+
+function getLessonAtFlatIndex(
+  course: Course,
+  index: number
+): { id: string; title: string } | null {
+  let flatIndex = 0;
+  for (const mod of course.modules) {
+    for (const lesson of mod.lessons) {
+      if (flatIndex === index) return { id: lesson.id, title: lesson.title };
+      flatIndex++;
+    }
+  }
+  return null;
+}
 
 export function getAllCourses(): Course[] {
   return courses;

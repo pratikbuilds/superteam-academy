@@ -78,5 +78,20 @@
     "notFoundTitle": "Course not found",
     "notFoundDescription": "The course you're looking for doesn't exist or has been removed.",
     "backToCourses": "Back to courses"
+  },
+  "lessonView": {
+    "notFoundTitle": "Lesson not found",
+    "notFoundDescription": "The lesson you're looking for doesn't exist or has been removed.",
+    "backToCourses": "Back to courses",
+    "markComplete": "Mark Complete",
+    "previous": "Previous",
+    "next": "Next",
+    "run": "Run",
+    "output": "Output",
+    "tests": "Tests",
+    "pass": "Pass",
+    "fail": "Fail",
+    "allTestsPassed": "All tests passed!",
+    "runComingSoon": "Run on server (coming soon)"
   }
 }

@@ -78,5 +78,20 @@
     "notFoundTitle": "Curso no encontrado",
     "notFoundDescription": "El curso que buscas no existe o ha sido eliminado.",
     "backToCourses": "Volver a cursos"
+  },
+  "lessonView": {
+    "notFoundTitle": "Lección no encontrada",
+    "notFoundDescription": "La lección que buscas no existe o ha sido eliminada.",
+    "backToCourses": "Volver a cursos",
+    "markComplete": "Marcar como completado",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "run": "Ejecutar",
+    "output": "Salida",
+    "tests": "Pruebas",
+    "pass": "Aprobado",
+    "fail": "Fallido",
+    "allTestsPassed": "¡Todas las pruebas pasaron!",
+    "runComingSoon": "Ejecutar en servidor (próximamente)"
   }
 }

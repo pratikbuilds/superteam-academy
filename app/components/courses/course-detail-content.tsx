@@ -9,7 +9,7 @@ import type { Course } from "@/lib/data/types";
 type Props = { course: Course };
 
 export function CourseDetailContent({ course }: Props) {
-  const enrollment = useEnrollmentStatus(course.id);
+  const enrollment = useEnrollmentStatus(course.id, course.totalLessons);
 
   return (
     <div className="grid gap-10 lg:grid-cols-[1fr_320px]">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import {
   Accordion,
   AccordionContent,
@@ -133,49 +134,51 @@ export function CourseCurriculum({ course, enrollment }: Props) {
                   const locked = enrollment.enrolled && !completed && !prevDone;
 
                   return (
-                    <li
-                      key={lesson.id}
-                      className={cn(
-                        "flex items-center gap-3 py-2.5 sm:py-3",
-                        locked && "opacity-40"
-                      )}
-                    >
-                      {/* left icon */}
-                      {completed ? (
-                        <span className="size-4 shrink-0" />
-                      ) : isNext ? (
-                        <Play
-                          className="size-4 shrink-0 text-primary"
-                          weight="fill"
-                        />
-                      ) : (
-                        <Lock
-                          className="size-4 shrink-0 text-muted-foreground"
-                          weight="bold"
-                        />
-                      )}
-
-                      <span
+                    <li key={lesson.id}>
+                      <Link
+                        href={`/courses/${course.slug}/lessons/${lesson.id}`}
                         className={cn(
-                          "min-w-0 flex-1 text-sm",
-                          completed &&
-                            "text-muted-foreground line-through decoration-muted-foreground/40"
+                          "flex items-center gap-3 py-2.5 sm:py-3 transition-colors hover:bg-muted/50 -mx-4 px-4 sm:-mx-5 sm:px-5 rounded-md",
+                          locked && "opacity-40"
                         )}
                       >
-                        {moduleIdx + 1}.{i + 1} {lesson.title}
-                      </span>
+                        {/* left icon */}
+                        {completed ? (
+                          <span className="size-4 shrink-0" />
+                        ) : isNext ? (
+                          <Play
+                            className="size-4 shrink-0 text-primary"
+                            weight="fill"
+                          />
+                        ) : (
+                          <Lock
+                            className="size-4 shrink-0 text-muted-foreground"
+                            weight="bold"
+                          />
+                        )}
 
-                      {/* right side */}
-                      {completed ? (
-                        <CheckCircle
-                          className="size-4 shrink-0 text-primary sm:size-5"
-                          weight="fill"
-                        />
-                      ) : (
-                        <span className="shrink-0 font-mono text-xs text-muted-foreground">
-                          {lesson.duration} min
+                        <span
+                          className={cn(
+                            "min-w-0 flex-1 text-sm",
+                            completed &&
+                              "text-muted-foreground line-through decoration-muted-foreground/40"
+                          )}
+                        >
+                          {moduleIdx + 1}.{i + 1} {lesson.title}
                         </span>
-                      )}
+
+                        {/* right side */}
+                        {completed ? (
+                          <CheckCircle
+                            className="size-4 shrink-0 text-primary sm:size-5"
+                            weight="fill"
+                          />
+                        ) : (
+                          <span className="shrink-0 font-mono text-xs text-muted-foreground">
+                            {lesson.duration} min
+                          </span>
+                        )}
+                      </Link>
                     </li>
                   );
                 })}

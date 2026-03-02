@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useLessonCompletion } from "./use-lesson-completion";
 
 export type EnrollmentStatus = {
   enrolled: boolean;
@@ -10,12 +10,17 @@ export type EnrollmentStatus = {
 
 /**
  * Mock enrollment status for MVP. Returns fake enrolled state for demo.
+ * completedLessons merges mock + localStorage via useLessonCompletion.
  * Replace with on-chain enrollment PDA fetch when backend is wired.
  */
-export function useEnrollmentStatus(courseId: string): EnrollmentStatus {
-  return useMemo(() => ({
+export function useEnrollmentStatus(
+  courseId: string,
+  totalLessons?: number
+): EnrollmentStatus {
+  const { completedLessons } = useLessonCompletion(courseId);
+  return {
     enrolled: true,
-    completedLessons: [0, 1, 2],
-    totalLessons: 15,
-  }), [courseId]);
+    completedLessons,
+    totalLessons: totalLessons ?? 15,
+  };
 }
