@@ -5,6 +5,7 @@ import { Providers } from "@/components/providers";
 import { Header } from "@/components/header";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { PostHogPageView } from "@/components/posthog-pageview";
 
 type Props = { children: React.ReactNode; params: Promise<{ locale: string }> };
 
@@ -23,6 +24,7 @@ export default async function LocaleLayout({ children }: Props) {
     <NextIntlClientProvider messages={messages}>
       <Providers>
         <TooltipProvider>
+          <PostHogPageView />
           <Header />
           {children}
           <Toaster />

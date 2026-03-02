@@ -4,10 +4,14 @@ const clientSchema = z.object({
   NEXT_PUBLIC_SOLANA_NETWORK: z
     .enum(["mainnet", "devnet", "testnet"])
     .default("devnet"),
+  NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
+  NEXT_PUBLIC_POSTHOG_HOST: z.string().url().optional(),
 });
 
 const clientEnv = {
   NEXT_PUBLIC_SOLANA_NETWORK: process.env.NEXT_PUBLIC_SOLANA_NETWORK,
+  NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
+  NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
 };
 
 const parsed = clientSchema.safeParse(clientEnv);
