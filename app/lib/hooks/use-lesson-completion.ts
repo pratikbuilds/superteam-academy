@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 const STORAGE_PREFIX = "academy-lesson-complete-";
 
@@ -24,6 +24,7 @@ function getCompletedFromStorage(courseId: string): number[] {
 
 export type LessonCompletionState = {
   completedLessons: number[];
+  completedSet: Set<number>;
   markComplete: (lessonIndex: number) => void;
   isComplete: (lessonIndex: number) => boolean;
 };
@@ -40,6 +41,7 @@ export function useLessonCompletion(courseId: string): LessonCompletionState {
   const completedLessons = [...new Set([...MOCK_COMPLETED, ...stored])].sort(
     (a, b) => a - b
   );
+  const completedSet = useMemo(() => new Set(completedLessons), [completedLessons]);
 
   const markComplete = useCallback(
     (lessonIndex: number) => {
@@ -51,9 +53,9 @@ export function useLessonCompletion(courseId: string): LessonCompletionState {
   );
 
   const isComplete = useCallback(
-    (lessonIndex: number) => completedLessons.includes(lessonIndex),
-    [completedLessons]
+    (lessonIndex: number) => completedSet.has(lessonIndex),
+    [completedSet]
   );
 
-  return { completedLessons, markComplete, isComplete };
+  return { completedLessons, completedSet, markComplete, isComplete };
 }

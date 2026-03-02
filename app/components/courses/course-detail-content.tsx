@@ -6,15 +6,21 @@ import { CourseCurriculum } from "./course-curriculum";
 import { useEnrollmentStatus } from "@/lib/hooks/use-enrollment-status";
 import type { Course } from "@/lib/data/types";
 
-type Props = { course: Course };
+type Props = {
+  course: Course;
+  prerequisiteTitle?: string | null;
+};
 
-export function CourseDetailContent({ course }: Props) {
+export function CourseDetailContent({ course, prerequisiteTitle }: Props) {
   const enrollment = useEnrollmentStatus(course.id, course.totalLessons);
 
   return (
     <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
       <div className="min-w-0 space-y-10">
-        <CourseDetailHeader course={course} />
+        <CourseDetailHeader
+          course={course}
+          prerequisiteTitle={prerequisiteTitle}
+        />
         <section id="curriculum">
           <CourseCurriculum course={course} enrollment={enrollment} />
         </section>

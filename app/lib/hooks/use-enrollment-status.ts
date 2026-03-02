@@ -5,6 +5,7 @@ import { useLessonCompletion } from "./use-lesson-completion";
 export type EnrollmentStatus = {
   enrolled: boolean;
   completedLessons: number[];
+  completedSet: Set<number>;
   totalLessons: number;
 };
 
@@ -17,10 +18,11 @@ export function useEnrollmentStatus(
   courseId: string,
   totalLessons?: number
 ): EnrollmentStatus {
-  const { completedLessons } = useLessonCompletion(courseId);
+  const { completedLessons, completedSet } = useLessonCompletion(courseId);
   return {
     enrolled: true,
     completedLessons,
+    completedSet,
     totalLessons: totalLessons ?? 15,
   };
 }

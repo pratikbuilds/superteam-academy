@@ -24,23 +24,28 @@ export function CourseCurriculum({ course, enrollment }: Props) {
   const t = useTranslations("courseDetail");
   let offset = 0;
 
+  const { completedSet } = enrollment;
   const modules = course.modules.map((mod, i) => {
     const start = offset;
     const total = mod.lessons.length;
-    const done = mod.lessons.filter((_, j) =>
-      enrollment.completedLessons.includes(start + j)
-    ).length;
+    let done = 0;
+    for (let j = 0; j < total; j++) {
+      if (completedSet.has(start + j)) done++;
+    }
 
     let status: ModuleStatus = "locked";
     if (!enrollment.enrolled) {
       status = i === 0 ? "in-progress" : "locked";
     } else if (done === total) {
       status = "completed";
-    } else if (
-      i === 0 ||
-      enrollment.completedLessons.filter((idx) => idx < start).length === start
-    ) {
+    } else if (i === 0) {
       status = "in-progress";
+    } else {
+      let prevDone = 0;
+      for (const idx of completedSet) {
+        if (idx < start) prevDone++;
+      }
+      status = prevDone === start ? "in-progress" : "locked";
     }
 
     offset += total;
@@ -126,10 +131,8 @@ export function CourseCurriculum({ course, enrollment }: Props) {
               <ul className="divide-y divide-border/60">
                 {mod.lessons.map((lesson, i) => {
                   const idx = start + i;
-                  const completed = enrollment.completedLessons.includes(idx);
-                  const prevDone =
-                    i === 0 ||
-                    enrollment.completedLessons.includes(idx - 1);
+                  const completed = completedSet.has(idx);
+                  const prevDone = i === 0 || completedSet.has(idx - 1);
                   const isNext = enrollment.enrolled && !completed && prevDone;
                   const locked = enrollment.enrolled && !completed && !prevDone;
 

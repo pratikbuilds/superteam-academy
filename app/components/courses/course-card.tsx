@@ -1,5 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
+import { BLUR_PLACEHOLDER } from "@/lib/constants";
 import { DifficultyBadge } from "./difficulty-badge";
 import {
   Clock,
@@ -39,16 +40,18 @@ export function CourseCard({ course }: { course: Course }) {
             fill
             sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-          <span
-            className={`absolute bottom-3 left-3 h-2 w-10 rounded-full ${accent}`}
+            placeholder="blur"
+            blurDataURL={BLUR_PLACEHOLDER}
+            loading="lazy"
           />
         </div>
 
         <div className="space-y-4 p-4">
           <div className="flex items-start justify-between gap-3 border-b border-border/60 pb-3">
             <div className="space-y-1">
-              <p className="text-[12px] font-medium text-muted-foreground">{label}</p>
+              <p className="text-[12px] font-medium text-muted-foreground">
+                {label}
+              </p>
               <h3 className="font-heading text-xl leading-tight font-semibold tracking-tight sm:text-2xl">
                 {course.title}
               </h3>

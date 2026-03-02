@@ -1,6 +1,7 @@
 packages:
   - "app"
   - "sdk"
+  - "studio-lms"
 
 ignoredBuiltDependencies:
   - sharp

@@ -1,12 +1,16 @@
 import Image from "next/image";
+import { BLUR_PLACEHOLDER } from "@/lib/constants";
 import { Link } from "@/i18n/navigation";
 import { DifficultyBadge } from "./difficulty-badge";
-import { getTrackById, getCourseBySlug } from "@/lib/data/queries";
+import { getTrackById } from "@/lib/data/queries";
 import type { Course } from "@/lib/data/types";
 
-type Props = { course: Course };
+type Props = {
+  course: Course;
+  prerequisiteTitle?: string | null;
+};
 
-export function CourseDetailHeader({ course }: Props) {
+export function CourseDetailHeader({ course, prerequisiteTitle }: Props) {
   const track = getTrackById(course.trackId);
 
   return (
@@ -19,6 +23,8 @@ export function CourseDetailHeader({ course }: Props) {
           sizes="208px"
           className="object-cover"
           priority
+          placeholder="blur"
+          blurDataURL={BLUR_PLACEHOLDER}
         />
       </div>
 
@@ -50,8 +56,8 @@ export function CourseDetailHeader({ course }: Props) {
               href={`/courses/${course.prerequisiteSlug}`}
               className="font-medium underline underline-offset-2 hover:text-foreground"
             >
-              {getCourseBySlug(course.prerequisiteSlug)?.title ??
-                course.prerequisiteSlug.replace(/-/g, " ")}
+              {prerequisiteTitle ??
+                course.prerequisiteSlug!.replace(/-/g, " ")}
             </Link>
           </p>
         )}

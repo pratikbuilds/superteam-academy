@@ -5,8 +5,15 @@ import "@/lib/env";
 const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
-  experimental: {
-    optimizePackageImports: ["@phosphor-icons/react"],
+  // optimizePackageImports for @phosphor-icons conflicts with Turbopack HMR
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.sanity.io",
+        pathname: "/images/**",
+      },
+    ],
   },
 };
 

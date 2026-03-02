@@ -3,9 +3,15 @@ import { getTranslations } from "next-intl/server";
 import { LearningPathsSection } from "@/components/courses/learning-paths-section";
 import { FilterBar } from "@/components/courses/filter-bar";
 import { CourseCard } from "@/components/courses/course-card";
+import { CourseCardSkeleton } from "@/components/courses/course-card-skeleton";
 import { EmptyState } from "@/components/courses/empty-state";
 import { filterCourses, getAllTracks } from "@/lib/data/queries";
-import type { Difficulty, FilterParams, SortOption } from "@/lib/data/types";
+import type {
+  Difficulty,
+  FilterParams,
+  SortOption,
+  Track,
+} from "@/lib/data/types";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -46,8 +52,6 @@ export default async function CoursesPage({ searchParams }: Props) {
     }
   }
 
-  const courses = filterCourses(filterParams);
-
   return (
     <main className="mx-auto max-w-6xl px-4 pb-16 pt-10 sm:px-6">
       <header className="space-y-1">
@@ -66,27 +70,56 @@ export default async function CoursesPage({ searchParams }: Props) {
       <div className="mt-10">
         <h2 className="font-heading text-lg font-semibold">Browse Courses</h2>
 
-        <div className="mt-4">
-          <Suspense>
-            <FilterBar tracks={tracks} resultCount={courses.length} />
-          </Suspense>
-        </div>
-
-        {courses.length > 0 ? (
-          <div className="mt-5 grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {courses.map((course) => (
-              <CourseCard key={course.id} course={course} />
-            ))}
-          </div>
-        ) : (
-          <div className="mt-5">
-            <EmptyState
-              title={t("noResults")}
-              description={t("noResultsDescription")}
-            />
-          </div>
-        )}
+        <Suspense
+          fallback={
+            <>
+              <div className="mt-4">
+                <FilterBar tracks={tracks} resultCount={0} />
+              </div>
+              <div className="mt-5 grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <CourseCardSkeleton key={i} />
+                ))}
+              </div>
+            </>
+          }
+        >
+          <CourseList filterParams={filterParams} tracks={tracks} />
+        </Suspense>
       </div>
     </main>
+  );
+}
+
+async function CourseList({
+  filterParams,
+  tracks,
+}: {
+  filterParams: FilterParams;
+  tracks: Track[];
+}) {
+  const t = await getTranslations("courses");
+  const courses = await filterCourses(filterParams);
+
+  return (
+    <>
+      <div className="mt-4">
+        <FilterBar tracks={tracks} resultCount={courses.length} />
+      </div>
+      {courses.length > 0 ? (
+        <div className="mt-5 grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {courses.map((course) => (
+            <CourseCard key={course.id} course={course} />
+          ))}
+        </div>
+      ) : (
+        <div className="mt-5">
+          <EmptyState
+            title={t("noResults")}
+            description={t("noResultsDescription")}
+          />
+        </div>
+      )}
+    </>
   );
 }

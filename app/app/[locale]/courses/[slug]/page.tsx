@@ -11,7 +11,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const course = getCourseBySlug(slug);
+  const course = await getCourseBySlug(slug);
   if (!course) return {};
   return {
     title: `${course.title} | Superteam Academy`,
@@ -26,11 +26,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CourseDetailPage({ params }: Props) {
   const { slug } = await params;
-  const course = getCourseBySlug(slug);
+  const course = await getCourseBySlug(slug);
 
   if (!course) notFound();
 
   const track = getTrackById(course.trackId);
+  const prerequisiteTitle = course.prerequisiteSlug
+    ? (await getCourseBySlug(course.prerequisiteSlug))?.title
+    : null;
 
   return (
     <main className="mx-auto max-w-6xl px-4 pb-16 pt-10 sm:px-6">
@@ -58,7 +61,10 @@ export default async function CourseDetailPage({ params }: Props) {
         </ol>
       </nav>
 
-      <CourseDetailContent course={course} />
+      <CourseDetailContent
+        course={course}
+        prerequisiteTitle={prerequisiteTitle}
+      />
     </main>
   );
 }

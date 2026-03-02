@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getCourseBySlug, getLessonBySlug, getTrackById } from "@/lib/data/queries";
+import {
+  getCourseBySlug,
+  getLessonBySlugFromCourse,
+  getTrackById,
+} from "@/lib/data/queries";
 import { LessonView } from "@/components/lessons/lesson-view";
 import type { Metadata } from "next";
 
@@ -10,10 +14,10 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, id } = await params;
-  const ctx = getLessonBySlug(slug, id);
-  if (!ctx) return {};
-  const course = getCourseBySlug(slug);
+  const course = await getCourseBySlug(slug);
   if (!course) return {};
+  const ctx = getLessonBySlugFromCourse(course, id);
+  if (!ctx) return {};
   return {
     title: `${ctx.lesson.title} | ${course.title} | Superteam Academy`,
     description: ctx.lesson.title,
@@ -22,10 +26,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LessonPage({ params }: Props) {
   const { slug, id } = await params;
-  const course = getCourseBySlug(slug);
+  const course = await getCourseBySlug(slug);
   if (!course) notFound();
 
-  const ctx = getLessonBySlug(slug, id);
+  const ctx = getLessonBySlugFromCourse(course, id);
   if (!ctx) notFound();
 
   const track = getTrackById(course.trackId);
