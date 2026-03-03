@@ -16,81 +16,56 @@ const iconMap: Record<string, ComponentType<IconProps>> = {
   CurrencyDollar,
 };
 
-const trackStyles: Record<
-  string,
-  { iconBg: string; accent: string; hoverBorder: string }
-> = {
-  "solana-fundamentals": {
-    iconBg: "bg-emerald-500/15",
-    accent: "text-emerald-500",
-    hoverBorder: "hover:border-emerald-500/30",
-  },
-  "anchor-development": {
-    iconBg: "bg-blue-500/15",
-    accent: "text-blue-500",
-    hoverBorder: "hover:border-blue-500/30",
-  },
-  "defi-on-solana": {
-    iconBg: "bg-amber-500/15",
-    accent: "text-amber-500",
-    hoverBorder: "hover:border-amber-500/30",
-  },
-};
-
 export function LearningPathsSection({ title }: { title: string }) {
   const tracks = getAllTracks();
 
   return (
-    <section className="rounded-xl bg-card p-5 ring-1 ring-border">
-      <h2 className="font-heading text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+    <section>
+      <h2 className="font-heading text-xs font-semibold uppercase tracking-widest text-muted-foreground">
         {title}
       </h2>
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+      <ul
+        className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        role="list"
+      >
         {tracks.map((track) => {
           const Icon = iconMap[track.icon] ?? Cube;
-          const style =
-            trackStyles[track.id] ?? trackStyles["solana-fundamentals"];
-
           return (
-            <Link
-              key={track.id}
-              href={`/courses?track=${track.id}`}
-              className="group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:rounded-lg"
-            >
-              <div
+            <li key={track.id}>
+              <Link
+                href={`/courses?track=${track.id}`}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg border border-border bg-background p-4 transition-all duration-200",
-                  style.hoverBorder,
+                  "group block rounded-lg border-2 border-border bg-card p-4 text-left transition-all duration-200",
+                  "hover:border-primary hover:bg-primary/10 hover:ring-2 hover:ring-primary hover:ring-offset-2 hover:ring-offset-background",
+                  "focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                 )}
               >
                 <div
-                  className={cn(
-                    "flex size-11 shrink-0 items-center justify-center rounded-lg",
-                    style.iconBg,
-                  )}
+                  className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary"
+                  aria-hidden
                 >
-                  <Icon
-                    className={cn("size-5", style.accent)}
-                    weight="duotone"
-                  />
+                  <Icon className="size-5" weight="duotone" />
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="font-heading text-sm font-semibold leading-tight">
-                    {track.name}
-                  </p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
+                <p className="mt-3 font-heading text-sm font-semibold leading-tight text-foreground">
+                  {track.name}
+                </p>
+                <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                  {track.description}
+                </p>
+                <div className="mt-3 flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">
                     {track.courseCount} courses
-                  </p>
+                  </span>
+                  <span className="inline-flex items-center gap-1 font-heading text-xs font-medium text-primary transition-all duration-200 group-hover:gap-2">
+                    View path
+                    <ArrowRight className="size-3.5" weight="bold" aria-hidden />
+                  </span>
                 </div>
-                <ArrowRight
-                  className="size-4 shrink-0 text-muted-foreground/30 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-foreground"
-                  weight="bold"
-                />
-              </div>
-            </Link>
+              </Link>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </section>
   );
 }

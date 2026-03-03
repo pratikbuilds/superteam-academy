@@ -63,11 +63,11 @@ export default async function CoursesPage({ searchParams }: Props) {
         </p>
       </header>
 
-      <div className="mt-8">
+      <div className="mt-5">
         <LearningPathsSection title={t("learningPaths")} />
       </div>
 
-      <div className="mt-10">
+      <div className="mt-6">
         <h2 className="font-heading text-lg font-semibold">Browse Courses</h2>
 
         <Suspense
