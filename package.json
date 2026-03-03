@@ -4,7 +4,8 @@
   "scripts": {
     "build:sdk": "cd onchain-academy && anchor build && cd .. && codama run js && pnpm -C sdk build",
     "codama:js": "codama run js",
-    "build": "pnpm run build:sdk && pnpm -C app build"
+    "build": "pnpm run build:sdk && pnpm -C app build",
+    "dev:backend": "pnpm -C backend dev"
   },
   "devDependencies": {
     "codama": "latest",
