@@ -1,25 +1,15 @@
 import "dotenv/config";
 import { serve } from "@hono/node-server";
-import { Hono } from "hono";
-import { cors } from "hono/cors";
 import { env } from "./env.ts";
+import { createApp } from "./app.ts";
 
-const app = new Hono();
-
-const corsOrigins = env.CORS_ORIGIN.split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-
-app.use(
-  "/*",
-  cors({
-    origin: corsOrigins.length === 1 ? corsOrigins[0] : corsOrigins,
-  }),
-);
-
-app.get("/health", (c) => {
-  return c.json({ ok: true });
+const app = createApp({
+  corsOrigin: env.CORS_ORIGIN,
+  authDomain: env.AUTH_DOMAIN,
+  authUri: env.AUTH_URI,
+  authChainId: env.AUTH_CHAIN_ID,
 });
+const corsOrigins = env.CORS_ORIGIN.split(",").map((origin) => origin.trim());
 
 serve(
   {
