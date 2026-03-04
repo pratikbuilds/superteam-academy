@@ -1,17 +1,25 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import {
-  AuthError,
-  createSiwsChallenge,
-  verifyAndConsumeSiwsProof,
-} from "./auth.ts";
+import type { CompleteLessonOnChain } from "./program";
+import { createAuthRoutes } from "./routes/auth";
+import { executeCodeRoutes } from "./routes/execute-code";
+import { healthRoutes } from "./routes/health";
+import { createLearnerRoutes } from "./routes/learner";
+import { leaderboardRoutes } from "./routes/leaderboard";
+import { profileRoutes } from "./routes/profile";
+import { readRoutes } from "./routes/read";
 
-export function createApp(config: {
-  corsOrigin: string;
-  authDomain: string;
-  authUri: string;
-  authChainId: string;
-}): Hono {
+export type CompleteLessonOnChainOverride = CompleteLessonOnChain;
+
+export function createApp(
+  config: {
+    corsOrigin: string;
+    authDomain: string;
+    authUri: string;
+    authChainId: string;
+  },
+  overrides?: { completeLessonOnChain?: CompleteLessonOnChainOverride },
+): Hono {
   const app = new Hono();
 
   const corsOrigins = config.corsOrigin
@@ -26,56 +34,13 @@ export function createApp(config: {
     }),
   );
 
-  app.get("/health", (c) => {
-    return c.json({ ok: true });
-  });
-
-  app.post("/auth/create-signin-data", async (c) => {
-    let body: unknown;
-    try {
-      body = await c.req.json();
-    } catch {
-      body = {};
-    }
-
-    try {
-      const challenge = createSiwsChallenge({
-        request: body,
-        authDomain: config.authDomain,
-        authUri: config.authUri,
-        authChainId: config.authChainId,
-      });
-      return c.json({
-        ok: true,
-        nonce: challenge.nonce,
-        input: challenge.input,
-      });
-    } catch (error) {
-      if (error instanceof AuthError) {
-        return c.json({ ok: false, error: error.code }, error.status);
-      }
-      return c.json({ ok: false, error: "UNEXPECTED_AUTH_ERROR" }, 500);
-    }
-  });
-
-  app.post("/auth/verify", async (c) => {
-    let body: unknown;
-    try {
-      body = await c.req.json();
-    } catch {
-      body = {};
-    }
-
-    try {
-      const session = verifyAndConsumeSiwsProof({ request: body });
-      return c.json({ ok: true, session });
-    } catch (error) {
-      if (error instanceof AuthError) {
-        return c.json({ ok: false, error: error.code }, error.status);
-      }
-      return c.json({ ok: false, error: "UNEXPECTED_AUTH_ERROR" }, 500);
-    }
-  });
+  app.route("/", healthRoutes);
+  app.route("/", leaderboardRoutes);
+  app.route("/", profileRoutes);
+  app.route("/", createAuthRoutes(config));
+  app.route("/", createLearnerRoutes(overrides));
+  app.route("/", readRoutes);
+  app.route("/", executeCodeRoutes);
 
   return app;
 }

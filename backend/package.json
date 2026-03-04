@@ -3,21 +3,37 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node --experimental-strip-types src/index.ts",
+    "dev": "tsx src/index.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/src/index.js",
-    "test:auth": "node --experimental-strip-types scripts/test-auth.ts"
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "create-course": "tsx scripts/create-course.ts",
+    "test:auth": "tsx scripts/test-auth.ts",
+    "test:complete-auth": "tsx scripts/test-complete-lesson-auth.ts",
+    "test:finalize-auth": "tsx scripts/test-finalize-course-auth.ts",
+    "test:execute-code": "tsx scripts/test-execute-code.ts",
+    "test:credential-auth": "tsx scripts/test-credential-auth.ts"
   },
   "dependencies": {
+    "@hono/node-server": "1.19.9",
+    "@solana-program/token-2022": "^0.9.0",
+    "@solana/kit": "^6.1.0",
     "@solana/wallet-standard-features": "1.3.0",
     "@solana/wallet-standard-util": "1.1.2",
-    "@hono/node-server": "1.19.9",
+    "@superteam/academy-sdk": "workspace:*",
     "dotenv": "17.3.1",
     "hono": "4.11.9",
-    "zod": "4.3.6"
+    "zod": "4.3.6",
+    "pg": "^8.13.1",
+    "drizzle-orm": "^0.38.3"
   },
   "devDependencies": {
+    "@types/pg": "^8.11.10",
+    "drizzle-kit": "^0.30.1",
     "@types/node": "20.19.33",
+    "tsx": "^4.8.1",
     "typescript": "5.9.3"
   }
 }

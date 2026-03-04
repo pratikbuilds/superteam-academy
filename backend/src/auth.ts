@@ -12,7 +12,12 @@ const BASE58_ALPHABET =
 const DEFAULT_TTL_MS = 5 * 60 * 1000;
 const MAX_FUTURE_SKEW_MS = 30 * 1000;
 
-export type AuthAction = "complete-lesson" | "finalize-course";
+export type AuthAction =
+  | "complete-lesson"
+  | "finalize-course"
+  | "issue-credential"
+  | "upgrade-credential"
+  | "profile";
 
 type AuthErrorCode =
   | "MALFORMED_REQUEST"
@@ -20,7 +25,8 @@ type AuthErrorCode =
   | "EXPIRED_MESSAGE"
   | "REPLAYED_NONCE"
   | "INVALID_SIGNATURE"
-  | "INVALID_WALLET_BINDING";
+  | "INVALID_WALLET_BINDING"
+  | "INTENT_MISMATCH";
 
 type ChallengeRecord = {
   wallet: string;
@@ -43,7 +49,16 @@ const serializedBytesSchema = z.union([
 const challengeRequestSchema = z
   .object({
     wallet: z.string().min(32),
-    action: z.enum(["complete-lesson", "finalize-course"]).nullable().optional(),
+    action: z
+      .enum([
+        "complete-lesson",
+        "finalize-course",
+        "issue-credential",
+        "upgrade-credential",
+        "profile",
+      ])
+      .nullable()
+      .optional(),
     courseId: z.string().min(1).nullable().optional(),
     lessonIndex: z.number().int().min(0).nullable().optional(),
   })
@@ -52,6 +67,22 @@ const challengeRequestSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "lessonIndex required for complete-lesson",
+      });
+    }
+    if (
+      value.action != null &&
+      value.action !== "profile" &&
+      value.courseId == null
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "courseId required when action is provided",
+      });
+    }
+    if (value.action !== "complete-lesson" && value.lessonIndex != null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "lessonIndex allowed only for complete-lesson",
       });
     }
   });
@@ -160,6 +191,7 @@ export function createSiwsChallenge(params: {
   const request = parsed.data;
   const nonce = randomBytes(16).toString("hex");
   const nowMs = Date.now();
+  cleanupExpiredChallenges(nowMs);
   const issuedAt = new Date(nowMs).toISOString();
   const expirationTime = new Date(nowMs + DEFAULT_TTL_MS).toISOString();
   const action = request.action ?? null;
@@ -253,6 +285,27 @@ export function verifyAndConsumeSiwsProof(params: {
     issuedAt: record.input.issuedAt,
     expirationTime: record.input.expirationTime,
   };
+}
+
+export function assertSiwsIntentMatches(
+  session: VerifiedSiwsSession,
+  expected: {
+    action: AuthAction;
+    courseId: string | null;
+    lessonIndex: number | null;
+  },
+): void {
+  const courseIdMatch =
+    expected.action === "profile"
+      ? true
+      : session.courseId === expected.courseId;
+  if (
+    session.action !== expected.action ||
+    !courseIdMatch ||
+    session.lessonIndex !== expected.lessonIndex
+  ) {
+    throw new AuthError("INTENT_MISMATCH", 401);
+  }
 }
 
 export function expireNonceForTest(nonce: string): void {

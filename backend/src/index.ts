@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { serve } from "@hono/node-server";
-import { env } from "./env.ts";
-import { createApp } from "./app.ts";
+import { env } from "./env";
+import { createApp } from "./app";
 
 const app = createApp({
   corsOrigin: env.CORS_ORIGIN,
