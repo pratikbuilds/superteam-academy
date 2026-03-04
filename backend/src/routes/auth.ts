@@ -1,7 +1,7 @@
 import { Hono } from "hono";
-import { createSiwsChallenge, verifyAndConsumeSiwsProof } from "../auth";
-import { handleRouteError } from "../lib/errors";
-import { parseJsonBody } from "../lib/parse";
+import { createSiwsChallenge, verifyAndConsumeSiwsProof } from "../auth.js";
+import { handleRouteError } from "../lib/errors.js";
+import { parseJsonBody } from "../lib/parse.js";
 
 export function createAuthRoutes(config: {
   authDomain: string;

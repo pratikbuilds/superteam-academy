@@ -27,4 +27,4 @@ COPY --from=builder /app/sdk/package.json ./sdk/
 COPY --from=builder /app/backend/package.json ./backend/
 COPY --from=builder /app/package.json ./
 WORKDIR /app
-CMD ["node", "backend/dist/src/index.js"]
+CMD ["node", "backend/dist/index.js"]

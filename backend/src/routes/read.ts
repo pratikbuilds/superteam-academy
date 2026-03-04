@@ -6,8 +6,8 @@ import {
   readCredentialParams,
   readEnrollment,
   readXpBalance,
-} from "../read";
-import { learnerQuerySchema } from "../schemas/requests";
+} from "../read.js";
+import { learnerQuerySchema } from "../schemas/requests.js";
 
 export const readRoutes = new Hono();
 

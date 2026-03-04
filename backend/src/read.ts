@@ -14,9 +14,9 @@ import {
   getEnrollmentPda,
   getXpAta,
 } from "@superteam/academy-sdk";
-import { db } from "./db";
-import { completedEnrollments } from "./db/schema";
-import { env } from "./env";
+import { db } from "./db/index.js";
+import { completedEnrollments } from "./db/schema.js";
+import { env } from "./env.js";
 
 const programAddress = address(env.PROGRAM_ID);
 

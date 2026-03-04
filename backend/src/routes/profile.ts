@@ -1,21 +1,21 @@
 import { Hono } from "hono";
 import { eq, and, desc } from "drizzle-orm";
-import { getAsset } from "../lib/das";
+import { getAsset } from "../lib/das.js";
 import {
   verifyAndConsumeSiwsProof,
   assertSiwsIntentMatches,
   AuthError,
-} from "../auth";
-import { db } from "../db";
-import { profiles, completedEnrollments } from "../db/schema";
-import { handleRouteError } from "../lib/errors";
-import { parseJsonBody } from "../lib/parse";
-import { readAchievementsForWallet } from "../read";
+} from "../auth.js";
+import { db } from "../db/index.js";
+import { profiles, completedEnrollments } from "../db/schema.js";
+import { handleRouteError } from "../lib/errors.js";
+import { parseJsonBody } from "../lib/parse.js";
+import { readAchievementsForWallet } from "../read.js";
 import {
   learnerQuerySchema,
   updateProfileRequestSchema,
-} from "../schemas/requests";
-import { env } from "../env";
+} from "../schemas/requests.js";
+import { env } from "../env.js";
 
 export const profileRoutes = new Hono();
 

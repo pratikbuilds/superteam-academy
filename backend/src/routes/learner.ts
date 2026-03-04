@@ -4,14 +4,14 @@ import {
   AuthError,
   assertSiwsIntentMatches,
   verifyAndConsumeSiwsProof,
-} from "../auth";
+} from "../auth.js";
 import { and, eq } from "drizzle-orm";
-import { db } from "../db";
-import { completedEnrollments } from "../db/schema";
-import { handleRouteError } from "../lib/errors";
-import { parseJsonBody } from "../lib/parse";
-import { readCourse } from "../read";
-import { parseU64OrThrow } from "../lib/parse-u64";
+import { db } from "../db/index.js";
+import { completedEnrollments } from "../db/schema.js";
+import { handleRouteError } from "../lib/errors.js";
+import { parseJsonBody } from "../lib/parse.js";
+import { readCourse } from "../read.js";
+import { parseU64OrThrow } from "../lib/parse-u64.js";
 import {
   completeLessonOnChain,
   finalizeCourseOnChain,
@@ -19,13 +19,13 @@ import {
   ProgramError,
   type CompleteLessonOnChain as CompleteLessonOnChainFn,
   upgradeCredentialOnChain,
-} from "../program";
+} from "../program.js";
 import {
   completeLessonRequestSchema,
   finalizeCourseRequestSchema,
   issueCredentialRequestSchema,
   upgradeCredentialRequestSchema,
-} from "../schemas/requests";
+} from "../schemas/requests.js";
 
 export function createLearnerRoutes(overrides?: {
   completeLessonOnChain?: CompleteLessonOnChainFn;

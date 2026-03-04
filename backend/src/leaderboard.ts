@@ -1,7 +1,7 @@
 import { address, createSolanaRpc, fetchEncodedAccounts } from "@solana/kit";
 import { decodeToken } from "@solana-program/token-2022";
 import { fetchMaybeConfig, getConfigPda } from "@superteam/academy-sdk";
-import { env } from "./env";
+import { env } from "./env.js";
 
 export type LeaderboardEntry = {
   rank: number;

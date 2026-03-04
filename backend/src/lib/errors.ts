@@ -1,6 +1,6 @@
 import type { Context } from "hono";
-import type { AuthError } from "../auth";
-import type { ProgramError } from "../program";
+import type { AuthError } from "../auth.js";
+import type { ProgramError } from "../program.js";
 
 export function handleRouteError(
   c: Context,

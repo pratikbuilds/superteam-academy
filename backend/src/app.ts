@@ -1,13 +1,13 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import type { CompleteLessonOnChain } from "./program";
-import { createAuthRoutes } from "./routes/auth";
-import { executeCodeRoutes } from "./routes/execute-code";
-import { healthRoutes } from "./routes/health";
-import { createLearnerRoutes } from "./routes/learner";
-import { leaderboardRoutes } from "./routes/leaderboard";
-import { profileRoutes } from "./routes/profile";
-import { readRoutes } from "./routes/read";
+import type { CompleteLessonOnChain } from "./program.js";
+import { createAuthRoutes } from "./routes/auth.js";
+import { executeCodeRoutes } from "./routes/execute-code.js";
+import { healthRoutes } from "./routes/health.js";
+import { createLearnerRoutes } from "./routes/learner.js";
+import { leaderboardRoutes } from "./routes/leaderboard.js";
+import { profileRoutes } from "./routes/profile.js";
+import { readRoutes } from "./routes/read.js";
 
 export type CompleteLessonOnChainOverride = CompleteLessonOnChain;
 

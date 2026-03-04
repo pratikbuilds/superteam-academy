@@ -1,8 +1,8 @@
 import { Hono } from "hono";
-import { executeCode } from "../execute-code";
-import { handleRouteError } from "../lib/errors";
-import { parseJsonBody } from "../lib/parse";
-import { executeCodeRequestSchema } from "../schemas/requests";
+import { executeCode } from "../execute-code.js";
+import { handleRouteError } from "../lib/errors.js";
+import { parseJsonBody } from "../lib/parse.js";
+import { executeCodeRequestSchema } from "../schemas/requests.js";
 
 export const executeCodeRoutes = new Hono();
 

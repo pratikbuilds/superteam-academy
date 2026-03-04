@@ -48,7 +48,7 @@ import {
   getXpAta,
   isOnchainAcademyError,
 } from "@superteam/academy-sdk";
-import { env } from "./env";
+import { env } from "./env.js";
 
 const TOKEN_2022_PROGRAM_ADDRESS = address(
   "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"

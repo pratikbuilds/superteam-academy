@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { getLeaderboard } from "../leaderboard";
+import { getLeaderboard } from "../leaderboard.js";
 
 export const leaderboardRoutes = new Hono().get("/leaderboard", async (c) => {
   try {
