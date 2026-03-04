@@ -4,7 +4,12 @@ import { AppProvider, getDefaultConfig } from "@solana/connector/react";
 import { ThemeProvider } from "next-themes";
 import { env } from "@/lib/env";
 
-type SolanaNetwork = "mainnet" | "mainnet-beta" | "devnet" | "testnet" | "localnet";
+type SolanaNetwork =
+  | "mainnet"
+  | "mainnet-beta"
+  | "devnet"
+  | "testnet"
+  | "localnet";
 
 function toClusterId(network: SolanaNetwork): `solana:${string}` {
   if (network === "mainnet" || network === "mainnet-beta") {
@@ -29,7 +34,8 @@ function getDefaultRpcUrl(network: SolanaNetwork): string {
 }
 
 const selectedNetwork = env.NEXT_PUBLIC_SOLANA_NETWORK as SolanaNetwork;
-const selectedRpcUrl = env.NEXT_PUBLIC_SOLANA_RPC_URL ?? getDefaultRpcUrl(selectedNetwork);
+const selectedRpcUrl =
+  env.NEXT_PUBLIC_SOLANA_RPC_URL ?? getDefaultRpcUrl(selectedNetwork);
 const selectedClusterId = toClusterId(selectedNetwork);
 
 const connectorConfig = getDefaultConfig({

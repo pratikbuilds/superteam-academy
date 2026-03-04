@@ -10,8 +10,7 @@ type HeaderNavProps = {
 
 export function HeaderNav({ href, label }: HeaderNavProps) {
   const pathname = usePathname();
-  const isActive =
-    pathname === href || pathname.startsWith(`${href}/`);
+  const isActive = pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <Link
