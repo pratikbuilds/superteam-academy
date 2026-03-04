@@ -22,7 +22,7 @@ export type EnrollmentStatus = {
 
 export function useEnrollmentStatus(
   courseId: string,
-  totalLessons?: number,
+  totalLessons?: number
 ): EnrollmentStatus {
   const total = totalLessons ?? 256;
   const { isConnected } = useWallet();
@@ -45,11 +45,11 @@ export function useEnrollmentStatus(
     try {
       const enrollmentPda = await getEnrollmentPda(
         courseId,
-        address as Address,
+        address as Address
       );
       const maybeEnrollment = await fetchMaybeEnrollment(
         client.rpc,
-        enrollmentPda,
+        enrollmentPda
       );
       if (!maybeEnrollment.exists) {
         setEnrolled(false);
@@ -59,7 +59,7 @@ export function useEnrollmentStatus(
 
       setEnrolled(true);
       setCompletedLessons(
-        getCompletedLessonIndices(maybeEnrollment.data.lessonFlags, total),
+        getCompletedLessonIndices(maybeEnrollment.data.lessonFlags, total)
       );
     } catch (error) {
       console.error("Failed to fetch enrollment status", error);
@@ -76,7 +76,7 @@ export function useEnrollmentStatus(
 
   const completedSet = useMemo(
     () => new Set(completedLessons),
-    [completedLessons],
+    [completedLessons]
   );
 
   return {

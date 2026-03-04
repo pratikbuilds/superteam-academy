@@ -27,25 +27,25 @@ const program = getProgram();
 
 const courseId = process.argv[2] || "solana-mock-test";
 const trackCollection = new PublicKey(
-  process.argv[3] || "HgbTmCi4wUWAWLx4LD6zJ2AQdayaCe7mVfhJpGwXfeVX",
+  process.argv[3] || "HgbTmCi4wUWAWLx4LD6zJ2AQdayaCe7mVfhJpGwXfeVX"
 );
 const MPL_CORE_PROGRAM_ID = new PublicKey(
-  "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d",
+  "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
 );
 
 const learner = provider.wallet.publicKey;
 
 const [configPda] = PublicKey.findProgramAddressSync(
   [Buffer.from("config")],
-  program.programId,
+  program.programId
 );
 const [coursePda] = PublicKey.findProgramAddressSync(
   [Buffer.from("course"), Buffer.from(courseId)],
-  program.programId,
+  program.programId
 );
 const [enrollmentPda] = PublicKey.findProgramAddressSync(
   [Buffer.from("enrollment"), Buffer.from(courseId), learner.toBuffer()],
-  program.programId,
+  program.programId
 );
 
 function isBitSet(flags: BN[], index: number): boolean {
@@ -85,20 +85,20 @@ function txUrl(sig: string): string {
 async function ensureAta(
   mint: PublicKey,
   owner: PublicKey,
-  label: string,
+  label: string
 ): Promise<PublicKey> {
   const ata = getAssociatedTokenAddressSync(
     mint,
     owner,
     false,
-    TOKEN_2022_PROGRAM_ID,
+    TOKEN_2022_PROGRAM_ID
   );
   try {
     await getAccount(
       provider.connection,
       ata,
       undefined,
-      TOKEN_2022_PROGRAM_ID,
+      TOKEN_2022_PROGRAM_ID
     );
   } catch {
     console.log(`  Creating ${label} XP token account...`);
@@ -107,7 +107,7 @@ async function ensureAta(
       ata,
       owner,
       mint,
-      TOKEN_2022_PROGRAM_ID,
+      TOKEN_2022_PROGRAM_ID
     );
     const tx = new anchor.web3.Transaction().add(ix);
     await provider.sendAndConfirm(tx);
@@ -130,14 +130,15 @@ async function main() {
   console.log(`  Program:    ${program.programId.toBase58()}`);
   console.log(`  Learner:    ${learner.toBase58()}`);
   console.log(
-    `  Course:     "${courseId}" (${lessonCount} lessons, ${course.xpPerLesson} XP/lesson)`,
+    `  Course:     "${courseId}" (${lessonCount} lessons, ${course.xpPerLesson} XP/lesson)`
   );
   console.log(`  XP Mint:    ${config.xpMint.toBase58()}`);
   console.log();
 
   // --- Check existing state ---
-  let enrollment =
-    await program.account.enrollment.fetchNullable(enrollmentPda);
+  let enrollment = await program.account.enrollment.fetchNullable(
+    enrollmentPda
+  );
 
   // --- Step 1: Enroll ---
   if (!enrollment) {
@@ -161,7 +162,7 @@ async function main() {
   } else {
     const done = countCompleted(enrollment.lessonFlags as BN[]);
     console.log(
-      `▸ Step 1: Enroll — skipped (already enrolled, ${done}/${lessonCount} lessons done)`,
+      `▸ Step 1: Enroll — skipped (already enrolled, ${done}/${lessonCount} lessons done)`
     );
   }
   console.log();
@@ -201,7 +202,7 @@ async function main() {
           })
           .rpc();
         console.log(
-          `  Lesson ${i + 1}/${lessonCount} ✓  (+${course.xpPerLesson} XP)`,
+          `  Lesson ${i + 1}/${lessonCount} ✓  (+${course.xpPerLesson} XP)`
         );
       } catch (e: any) {
         console.error(`  ✗ Lesson ${i + 1} failed: ${e.message}`);
@@ -222,7 +223,7 @@ async function main() {
     const creatorAta = await ensureAta(
       config.xpMint,
       course.creator,
-      "creator",
+      "creator"
     );
 
     try {
@@ -257,7 +258,7 @@ async function main() {
 
   if (enrollment.credentialAsset) {
     console.log(
-      `▸ Step 5: Issue credential — skipped (already issued: ${enrollment.credentialAsset.toBase58()})`,
+      `▸ Step 5: Issue credential — skipped (already issued: ${enrollment.credentialAsset.toBase58()})`
     );
   } else {
     console.log("▸ Step 5: Issue credential");
@@ -274,7 +275,7 @@ async function main() {
           `${courseId} Credential`,
           "https://arweave.net/credential-metadata",
           1,
-          new BN(totalXp),
+          new BN(totalXp)
         )
         .accountsPartial({
           config: configPda,
@@ -291,7 +292,7 @@ async function main() {
         .signers([credentialAsset])
         .rpc();
       console.log(
-        `  ✓ Credential minted: ${credentialAsset.publicKey.toBase58()}`,
+        `  ✓ Credential minted: ${credentialAsset.publicKey.toBase58()}`
       );
       console.log(`    ${txUrl(tx)}`);
     } catch (e: any) {
@@ -307,8 +308,9 @@ async function main() {
 
   // XP balance
   try {
-    const balance =
-      await provider.connection.getTokenAccountBalance(learnerAta);
+    const balance = await provider.connection.getTokenAccountBalance(
+      learnerAta
+    );
     const xp = Number(balance.value.amount);
     const level = Math.floor(Math.sqrt(xp / 100));
     console.log(`  XP Balance: ${xp}  (Level ${level})`);
@@ -318,7 +320,7 @@ async function main() {
 
   if (enrollment.credentialAsset) {
     console.log(
-      `  Credential: ${explorerUrl(enrollment.credentialAsset.toBase58())}`,
+      `  Credential: ${explorerUrl(enrollment.credentialAsset.toBase58())}`
     );
   }
   console.log(`  Enrollment: ${explorerUrl(enrollmentPda.toBase58())}`);

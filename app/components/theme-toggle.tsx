@@ -26,7 +26,7 @@ export function ThemeToggle() {
         aria-label={t("label")}
         className={cn(
           buttonVariants({ variant: "outline", size: "icon" }),
-          "cursor-pointer",
+          "cursor-pointer"
         )}
       >
         <SunIcon className="size-4" size={16} />
@@ -41,7 +41,7 @@ export function ThemeToggle() {
       aria-label={t("label")}
       className={cn(
         buttonVariants({ variant: "outline", size: "icon" }),
-        "cursor-pointer",
+        "cursor-pointer"
       )}
     >
       {isDark ? (

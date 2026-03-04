@@ -14,7 +14,7 @@ import { Keypair, PublicKey } from "@solana/web3.js";
 
 // Use deployed program ID (Anchor.toml programs.devnet)
 const PROGRAM_ID = new PublicKey(
-  "HxomCaGhymNEFWTBXKokAjxYcsQhJ6WLJqEjKcX4mLKf",
+  "HxomCaGhymNEFWTBXKokAjxYcsQhJ6WLJqEjKcX4mLKf"
 );
 
 const secret = JSON.parse(fs.readFileSync("../wallets/signer.json", "utf-8"));
@@ -26,7 +26,7 @@ const umi = createUmi("https://api.devnet.solana.com")
 
 const [configPda] = PublicKey.findProgramAddressSync(
   [Buffer.from("config")],
-  PROGRAM_ID,
+  PROGRAM_ID
 );
 
 async function main() {
@@ -34,7 +34,7 @@ async function main() {
 
   console.log(
     "Creating collection with updateAuthority = Config PDA:",
-    configPda.toBase58(),
+    configPda.toBase58()
   );
 
   const { signature } = await createCollectionV2(umi, {
@@ -47,7 +47,7 @@ async function main() {
   console.log("Collection created:", collectionSigner.publicKey.toString());
   console.log("Signature:", signature);
   console.log(
-    "\nUpdate your README and e2e-flow.ts trackCollection with this address.",
+    "\nUpdate your README and e2e-flow.ts trackCollection with this address."
   );
 }
 

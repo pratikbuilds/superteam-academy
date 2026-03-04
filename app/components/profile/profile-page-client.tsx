@@ -93,7 +93,7 @@ function formatDate(value: string): string {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "Unknown";
   return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(
-    date,
+    date
   );
 }
 
@@ -188,7 +188,9 @@ function RadarChart({ scores }: { scores: number[] }) {
   const points = scores.map((score, index) => {
     const angle = (Math.PI * 2 * index) / axisCount - Math.PI / 2;
     const scaled = (score / 100) * radius;
-    return `${center + Math.cos(angle) * scaled},${center + Math.sin(angle) * scaled}`;
+    return `${center + Math.cos(angle) * scaled},${
+      center + Math.sin(angle) * scaled
+    }`;
   });
 
   return (
@@ -203,7 +205,9 @@ function RadarChart({ scores }: { scores: number[] }) {
           const ringPoints = radarSkills.map((_, index) => {
             const angle = (Math.PI * 2 * index) / axisCount - Math.PI / 2;
             const r = radius * step;
-            return `${center + Math.cos(angle) * r},${center + Math.sin(angle) * r}`;
+            return `${center + Math.cos(angle) * r},${
+              center + Math.sin(angle) * r
+            }`;
           });
           return (
             <polygon
@@ -376,7 +380,7 @@ export function ProfilePageClient({
       github: normalizeUrl(github) || undefined,
       website: normalizeUrl(website) || undefined,
     }),
-    [github, twitter, website],
+    [github, twitter, website]
   );
 
   const activeProfile = useMemo(() => {
@@ -444,7 +448,7 @@ export function ProfilePageClient({
     }
     if (!usernameIsValid(nextUsername)) {
       toast.error(
-        "Username can only contain letters, numbers, hyphen, and underscore.",
+        "Username can only contain letters, numbers, hyphen, and underscore."
       );
       return;
     }
@@ -765,8 +769,8 @@ export function ProfilePageClient({
               {saving
                 ? "Saving..."
                 : profile
-                  ? "Save Changes"
-                  : "Create Profile"}
+                ? "Save Changes"
+                : "Create Profile"}
             </Button>
           </CardFooter>
         </Card>
@@ -798,7 +802,7 @@ export function ProfilePageClient({
                   <p className="mt-1 text-xs text-muted-foreground">
                     Awarded{" "}
                     {formatDate(
-                      new Date(achievement.awardedAt * 1000).toISOString(),
+                      new Date(achievement.awardedAt * 1000).toISOString()
                     )}
                   </p>
                 </article>
@@ -866,7 +870,7 @@ export function ProfilePageClient({
               <article
                 key={`${course.id}-${course.courseId}`}
                 className={cn(
-                  "rounded-lg border border-border/80 bg-background/60 p-3",
+                  "rounded-lg border border-border/80 bg-background/60 p-3"
                 )}
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">

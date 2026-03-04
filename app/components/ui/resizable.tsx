@@ -16,7 +16,7 @@ function ResizablePanelGroup({
       className={cn(
         "flex h-full w-full",
         direction === "vertical" && "flex-col",
-        className,
+        className
       )}
       {...props}
     />
@@ -50,7 +50,7 @@ function ResizableHandle({
     <Separator
       className={cn(
         "relative flex w-px shrink-0 cursor-col-resize touch-none items-center justify-center bg-border/60 transition-colors after:absolute after:inset-y-0 after:left-1/2 after:w-3 after:-translate-x-1/2 hover:bg-primary/25 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring data-[separator=hover]:bg-primary/25 data-[separator=active]:bg-primary/45",
-        className,
+        className
       )}
       {...props}
     >

@@ -162,7 +162,7 @@ export default function Page() {
   const tracks = getAllTracks();
   const totalCourses = tracks.reduce(
     (sum, track) => sum + track.courseCount,
-    0,
+    0
   );
 
   return (

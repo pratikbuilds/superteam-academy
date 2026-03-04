@@ -70,11 +70,11 @@ describe("onchain-academy", () => {
   before(async () => {
     [configPda, configBump] = PublicKey.findProgramAddressSync(
       [Buffer.from("config")],
-      program.programId,
+      program.programId
     );
     [coursePda, courseBump] = PublicKey.findProgramAddressSync(
       [Buffer.from("course"), Buffer.from(courseId)],
-      program.programId,
+      program.programId
     );
     [enrollmentPda, enrollmentBump] = PublicKey.findProgramAddressSync(
       [
@@ -82,7 +82,7 @@ describe("onchain-academy", () => {
         Buffer.from(courseId),
         learner.publicKey.toBuffer(),
       ],
-      program.programId,
+      program.programId
     );
 
     xpMintKeypair = Keypair.generate();
@@ -90,7 +90,7 @@ describe("onchain-academy", () => {
     for (const wallet of [learner.publicKey, creator.publicKey]) {
       const sig = await provider.connection.requestAirdrop(
         wallet,
-        5 * LAMPORTS_PER_SOL,
+        5 * LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(sig, "confirmed");
     }
@@ -103,7 +103,7 @@ describe("onchain-academy", () => {
     it("initializes config and XP mint", async () => {
       const [backendMinterRole] = PublicKey.findProgramAddressSync(
         [Buffer.from("minter"), authority.publicKey.toBuffer()],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -122,21 +122,22 @@ describe("onchain-academy", () => {
       const configAccount = await program.account.config.fetch(configPda);
 
       expect(configAccount.authority.toBase58()).to.equal(
-        authority.publicKey.toBase58(),
+        authority.publicKey.toBase58()
       );
       expect(configAccount.backendSigner.toBase58()).to.equal(
-        authority.publicKey.toBase58(),
+        authority.publicKey.toBase58()
       );
       expect(configAccount.xpMint.toBase58()).to.equal(
-        xpMintKeypair.publicKey.toBase58(),
+        xpMintKeypair.publicKey.toBase58()
       );
       expect(configAccount.bump).to.equal(configBump);
 
       // Verify auto-registered backend minter role
-      const minterRole =
-        await program.account.minterRole.fetch(backendMinterRole);
+      const minterRole = await program.account.minterRole.fetch(
+        backendMinterRole
+      );
       expect(minterRole.minter.toBase58()).to.equal(
-        authority.publicKey.toBase58(),
+        authority.publicKey.toBase58()
       );
       expect(minterRole.label).to.equal("backend");
       expect(minterRole.maxXpPerCall.toNumber()).to.equal(0);
@@ -148,7 +149,7 @@ describe("onchain-academy", () => {
       const secondMint = Keypair.generate();
       const [backendMinterRole] = PublicKey.findProgramAddressSync(
         [Buffer.from("minter"), authority.publicKey.toBuffer()],
-        program.programId,
+        program.programId
       );
 
       try {
@@ -191,7 +192,7 @@ describe("onchain-academy", () => {
 
       const configAccount = await program.account.config.fetch(configPda);
       expect(configAccount.backendSigner.toBase58()).to.equal(
-        newSigner.publicKey.toBase58(),
+        newSigner.publicKey.toBase58()
       );
 
       // Rotate back for subsequent tests
@@ -207,7 +208,7 @@ describe("onchain-academy", () => {
 
       const restored = await program.account.config.fetch(configPda);
       expect(restored.backendSigner.toBase58()).to.equal(
-        authority.publicKey.toBase58(),
+        authority.publicKey.toBase58()
       );
     });
 
@@ -226,7 +227,7 @@ describe("onchain-academy", () => {
 
       const after = await program.account.config.fetch(configPda);
       expect(after.backendSigner.toBase58()).to.equal(
-        before.backendSigner.toBase58(),
+        before.backendSigner.toBase58()
       );
     });
 
@@ -234,7 +235,7 @@ describe("onchain-academy", () => {
       const imposter = Keypair.generate();
       const airdropSig = await provider.connection.requestAirdrop(
         imposter.publicKey,
-        LAMPORTS_PER_SOL,
+        LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(airdropSig, "confirmed");
 
@@ -300,7 +301,7 @@ describe("onchain-academy", () => {
       expect(course.prerequisite).to.be.null;
       expect(course.creatorRewardXp).to.equal(CREATOR_REWARD_XP);
       expect(course.minCompletionsForReward).to.equal(
-        MIN_COMPLETIONS_FOR_REWARD,
+        MIN_COMPLETIONS_FOR_REWARD
       );
       expect(course.totalCompletions).to.equal(0);
       expect(course.totalEnrollments).to.equal(0);
@@ -313,7 +314,7 @@ describe("onchain-academy", () => {
       const emptyId = "";
       const [emptyPda] = PublicKey.findProgramAddressSync(
         [Buffer.from("course"), Buffer.from(emptyId)],
-        program.programId,
+        program.programId
       );
 
       try {
@@ -354,7 +355,7 @@ describe("onchain-academy", () => {
       try {
         const [longPda] = PublicKey.findProgramAddressSync(
           [Buffer.from("course"), Buffer.from(longId)],
-          program.programId,
+          program.programId
         );
 
         await program.methods
@@ -393,7 +394,7 @@ describe("onchain-academy", () => {
       const badId = "bad-diff-0";
       const [badPda] = PublicKey.findProgramAddressSync(
         [Buffer.from("course"), Buffer.from(badId)],
-        program.programId,
+        program.programId
       );
 
       try {
@@ -432,7 +433,7 @@ describe("onchain-academy", () => {
       const badId = "bad-diff-4";
       const [badPda] = PublicKey.findProgramAddressSync(
         [Buffer.from("course"), Buffer.from(badId)],
-        program.programId,
+        program.programId
       );
 
       try {
@@ -471,7 +472,7 @@ describe("onchain-academy", () => {
       const badId = "bad-lessons-0";
       const [badPda] = PublicKey.findProgramAddressSync(
         [Buffer.from("course"), Buffer.from(badId)],
-        program.programId,
+        program.programId
       );
 
       try {
@@ -510,7 +511,7 @@ describe("onchain-academy", () => {
       const maxId = "b".repeat(32);
       const [maxPda] = PublicKey.findProgramAddressSync(
         [Buffer.from("course"), Buffer.from(maxId)],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -545,7 +546,7 @@ describe("onchain-academy", () => {
         const diffId = `diff-${difficulty}`;
         const [diffPda] = PublicKey.findProgramAddressSync(
           [Buffer.from("course"), Buffer.from(diffId)],
-          program.programId,
+          program.programId
         );
 
         await program.methods
@@ -646,7 +647,7 @@ describe("onchain-academy", () => {
       const diffId = "diff-1";
       const [diffPda] = PublicKey.findProgramAddressSync(
         [Buffer.from("course"), Buffer.from(diffId)],
-        program.programId,
+        program.programId
       );
 
       const newContent = new Array(32).fill(99);
@@ -677,7 +678,7 @@ describe("onchain-academy", () => {
       const imposter = Keypair.generate();
       const airdropSig = await provider.connection.requestAirdrop(
         imposter.publicKey,
-        LAMPORTS_PER_SOL,
+        LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(airdropSig, "confirmed");
 
@@ -719,7 +720,7 @@ describe("onchain-academy", () => {
         learner.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       creatorTokenAccount = getAssociatedTokenAddressSync(
@@ -727,7 +728,7 @@ describe("onchain-academy", () => {
         creator.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const createLearnerAtaIx = createAssociatedTokenAccountInstruction(
@@ -736,7 +737,7 @@ describe("onchain-academy", () => {
         learner.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const createCreatorAtaIx = createAssociatedTokenAccountInstruction(
@@ -745,7 +746,7 @@ describe("onchain-academy", () => {
         creator.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const tx = new anchor.web3.Transaction()
@@ -804,7 +805,7 @@ describe("onchain-academy", () => {
       const secondLearner = Keypair.generate();
       const airdropSig = await provider.connection.requestAirdrop(
         secondLearner.publicKey,
-        LAMPORTS_PER_SOL,
+        LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(airdropSig, "confirmed");
 
@@ -814,7 +815,7 @@ describe("onchain-academy", () => {
           Buffer.from(courseId),
           secondLearner.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       try {
@@ -883,7 +884,7 @@ describe("onchain-academy", () => {
         provider.connection,
         learnerTokenAccount,
         "confirmed",
-        TOKEN_2022_PROGRAM_ID,
+        TOKEN_2022_PROGRAM_ID
       );
       expect(Number(ata.amount)).to.equal(XP_PER_LESSON);
     });
@@ -942,7 +943,7 @@ describe("onchain-academy", () => {
       const wrongSigner = Keypair.generate();
       const airdropSig = await provider.connection.requestAirdrop(
         wrongSigner.publicKey,
-        LAMPORTS_PER_SOL,
+        LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(airdropSig, "confirmed");
 
@@ -1011,7 +1012,7 @@ describe("onchain-academy", () => {
         provider.connection,
         learnerTokenAccount,
         "confirmed",
-        TOKEN_2022_PROGRAM_ID,
+        TOKEN_2022_PROGRAM_ID
       );
       expect(Number(ata.amount)).to.equal(XP_PER_LESSON * LESSON_COUNT);
     });
@@ -1051,10 +1052,10 @@ describe("onchain-academy", () => {
         provider.connection,
         learnerTokenAccount,
         "confirmed",
-        TOKEN_2022_PROGRAM_ID,
+        TOKEN_2022_PROGRAM_ID
       );
       expect(Number(learnerAta.amount)).to.equal(
-        XP_PER_LESSON * LESSON_COUNT + EXPECTED_BONUS_XP,
+        XP_PER_LESSON * LESSON_COUNT + EXPECTED_BONUS_XP
       );
 
       // Creator XP: 50 (reward met since totalCompletions=1 >= minCompletionsForReward=1)
@@ -1062,7 +1063,7 @@ describe("onchain-academy", () => {
         provider.connection,
         creatorTokenAccount,
         "confirmed",
-        TOKEN_2022_PROGRAM_ID,
+        TOKEN_2022_PROGRAM_ID
       );
       expect(Number(creatorAta.amount)).to.equal(CREATOR_REWARD_XP);
     });
@@ -1098,7 +1099,7 @@ describe("onchain-academy", () => {
       const incompleteId = "incomplete-course";
       const [incompletePda] = PublicKey.findProgramAddressSync(
         [Buffer.from("course"), Buffer.from(incompleteId)],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -1129,7 +1130,7 @@ describe("onchain-academy", () => {
           Buffer.from(incompleteId),
           learner.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -1191,7 +1192,7 @@ describe("onchain-academy", () => {
   describe("8. Close Enrollment", () => {
     it("closes completed enrollment immediately", async () => {
       const balanceBefore = await provider.connection.getBalance(
-        learner.publicKey,
+        learner.publicKey
       );
 
       await program.methods
@@ -1204,12 +1205,13 @@ describe("onchain-academy", () => {
         .signers([learner])
         .rpc();
 
-      const enrollmentInfo =
-        await provider.connection.getAccountInfo(enrollmentPda);
+      const enrollmentInfo = await provider.connection.getAccountInfo(
+        enrollmentPda
+      );
       expect(enrollmentInfo).to.be.null;
 
       const balanceAfter = await provider.connection.getBalance(
-        learner.publicKey,
+        learner.publicKey
       );
       expect(balanceAfter).to.be.greaterThan(balanceBefore);
     });
@@ -1218,7 +1220,7 @@ describe("onchain-academy", () => {
       const freshId = "fresh-close-test";
       const [freshCoursePda] = PublicKey.findProgramAddressSync(
         [Buffer.from("course"), Buffer.from(freshId)],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -1249,7 +1251,7 @@ describe("onchain-academy", () => {
           Buffer.from(freshId),
           learner.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -1300,7 +1302,7 @@ describe("onchain-academy", () => {
     before(async () => {
       const sig = await provider.connection.requestAirdrop(
         learner2.publicKey,
-        5 * LAMPORTS_PER_SOL,
+        5 * LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(sig, "confirmed");
 
@@ -1310,7 +1312,7 @@ describe("onchain-academy", () => {
           Buffer.from(courseId),
           learner2.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       learner2TokenAccount = getAssociatedTokenAddressSync(
@@ -1318,7 +1320,7 @@ describe("onchain-academy", () => {
         learner2.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const createAtaIx = createAssociatedTokenAccountInstruction(
@@ -1327,7 +1329,7 @@ describe("onchain-academy", () => {
         learner2.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
       const tx = new anchor.web3.Transaction().add(createAtaIx);
       await provider.sendAndConfirm(tx);
@@ -1381,8 +1383,9 @@ describe("onchain-academy", () => {
         .rpc();
       await provider.connection.confirmTransaction(fsig, "confirmed");
 
-      const enrollment =
-        await program.account.enrollment.fetch(learner2EnrollPda);
+      const enrollment = await program.account.enrollment.fetch(
+        learner2EnrollPda
+      );
       expect(enrollment.completedAt).to.not.be.null;
 
       const course = await program.account.course.fetch(coursePda);
@@ -1396,10 +1399,10 @@ describe("onchain-academy", () => {
         provider.connection,
         learner2TokenAccount,
         "confirmed",
-        TOKEN_2022_PROGRAM_ID,
+        TOKEN_2022_PROGRAM_ID
       );
       expect(Number(l2ata.amount)).to.equal(
-        XP_PER_LESSON * LESSON_COUNT + EXPECTED_BONUS_XP,
+        XP_PER_LESSON * LESSON_COUNT + EXPECTED_BONUS_XP
       );
 
       // Creator XP should now be 50 + 50 = 100 (reward for both completions)
@@ -1407,7 +1410,7 @@ describe("onchain-academy", () => {
         provider.connection,
         creatorTokenAccount,
         "confirmed",
-        TOKEN_2022_PROGRAM_ID,
+        TOKEN_2022_PROGRAM_ID
       );
       expect(Number(creatorAta.amount)).to.equal(CREATOR_REWARD_XP * 2);
     });
@@ -1442,13 +1445,13 @@ describe("onchain-academy", () => {
     before(async () => {
       const sig = await provider.connection.requestAirdrop(
         mismatchLearner.publicKey,
-        5 * LAMPORTS_PER_SOL,
+        5 * LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(sig, "confirmed");
 
       [otherCoursePda] = PublicKey.findProgramAddressSync(
         [Buffer.from("course"), Buffer.from(otherCourseId)],
-        program.programId,
+        program.programId
       );
 
       mismatchLearnerTokenAccount = getAssociatedTokenAddressSync(
@@ -1456,7 +1459,7 @@ describe("onchain-academy", () => {
         mismatchLearner.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const createAtaIx = createAssociatedTokenAccountInstruction(
@@ -1465,7 +1468,7 @@ describe("onchain-academy", () => {
         mismatchLearner.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
       const tx = new anchor.web3.Transaction().add(createAtaIx);
       await provider.sendAndConfirm(tx);
@@ -1500,7 +1503,7 @@ describe("onchain-academy", () => {
           Buffer.from(otherCourseId),
           mismatchLearner.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -1586,14 +1589,14 @@ describe("onchain-academy", () => {
       for (const wallet of [threshLearner.publicKey, threshCreator.publicKey]) {
         const sig = await provider.connection.requestAirdrop(
           wallet,
-          3 * LAMPORTS_PER_SOL,
+          3 * LAMPORTS_PER_SOL
         );
         await provider.connection.confirmTransaction(sig, "confirmed");
       }
 
       [threshCoursePda] = PublicKey.findProgramAddressSync(
         [Buffer.from("course"), Buffer.from(threshId)],
-        program.programId,
+        program.programId
       );
 
       // Course with min_completions_for_reward = 10 (high threshold)
@@ -1624,7 +1627,7 @@ describe("onchain-academy", () => {
         threshLearner.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       threshCreatorTokenAccount = getAssociatedTokenAddressSync(
@@ -1632,7 +1635,7 @@ describe("onchain-academy", () => {
         threshCreator.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const createLearnerAtaIx = createAssociatedTokenAccountInstruction(
@@ -1641,7 +1644,7 @@ describe("onchain-academy", () => {
         threshLearner.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const createCreatorAtaIx = createAssociatedTokenAccountInstruction(
@@ -1650,7 +1653,7 @@ describe("onchain-academy", () => {
         threshCreator.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const tx = new anchor.web3.Transaction()
@@ -1664,7 +1667,7 @@ describe("onchain-academy", () => {
           Buffer.from(threshId),
           threshLearner.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -1712,8 +1715,9 @@ describe("onchain-academy", () => {
         .rpc();
       await provider.connection.confirmTransaction(sig, "confirmed");
 
-      const enrollment =
-        await program.account.enrollment.fetch(threshEnrollPda);
+      const enrollment = await program.account.enrollment.fetch(
+        threshEnrollPda
+      );
       expect(enrollment.completedAt).to.not.be.null;
 
       // Learner gets lesson XP + bonus: 50 + 25 = 75
@@ -1721,7 +1725,7 @@ describe("onchain-academy", () => {
         provider.connection,
         threshLearnerTokenAccount,
         "confirmed",
-        TOKEN_2022_PROGRAM_ID,
+        TOKEN_2022_PROGRAM_ID
       );
       expect(Number(learnerAta.amount)).to.equal(50 + 25);
 
@@ -1730,7 +1734,7 @@ describe("onchain-academy", () => {
         provider.connection,
         threshCreatorTokenAccount,
         "confirmed",
-        TOKEN_2022_PROGRAM_ID,
+        TOKEN_2022_PROGRAM_ID
       );
       expect(Number(creatorAta.amount)).to.equal(0);
     });
@@ -1748,13 +1752,13 @@ describe("onchain-academy", () => {
     before(async () => {
       const sig = await provider.connection.requestAirdrop(
         prereqLearner.publicKey,
-        5 * LAMPORTS_PER_SOL,
+        5 * LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(sig, "confirmed");
 
       [advancedCoursePda] = PublicKey.findProgramAddressSync(
         [Buffer.from("course"), Buffer.from(advancedId)],
-        program.programId,
+        program.programId
       );
 
       // Create advanced course that requires solana-101 completion
@@ -1785,7 +1789,7 @@ describe("onchain-academy", () => {
         prereqLearner.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const createAtaIx = createAssociatedTokenAccountInstruction(
@@ -1794,7 +1798,7 @@ describe("onchain-academy", () => {
         prereqLearner.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
       const tx = new anchor.web3.Transaction().add(createAtaIx);
       await provider.sendAndConfirm(tx);
@@ -1807,7 +1811,7 @@ describe("onchain-academy", () => {
           Buffer.from(advancedId),
           prereqLearner.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       // Try to enroll without providing any remaining accounts
@@ -1840,7 +1844,7 @@ describe("onchain-academy", () => {
           Buffer.from(courseId),
           prereqLearner.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -1860,7 +1864,7 @@ describe("onchain-academy", () => {
           Buffer.from(advancedId),
           prereqLearner.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       // Pass the incomplete enrollment as remaining account
@@ -1905,7 +1909,7 @@ describe("onchain-academy", () => {
           Buffer.from(courseId),
           prereqLearner.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       for (let i = 0; i < LESSON_COUNT; i++) {
@@ -1947,7 +1951,7 @@ describe("onchain-academy", () => {
           Buffer.from(advancedId),
           prereqLearner.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -1975,7 +1979,7 @@ describe("onchain-academy", () => {
 
       const enrollment = await program.account.enrollment.fetch(advEnrollPda);
       expect(enrollment.course.toBase58()).to.equal(
-        advancedCoursePda.toBase58(),
+        advancedCoursePda.toBase58()
       );
     });
   });
@@ -1985,7 +1989,7 @@ describe("onchain-academy", () => {
   // ===========================================================================
   describe("Phase 6: Credentials", () => {
     const MPL_CORE_PROGRAM_ID = new PublicKey(
-      "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d",
+      "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
     );
 
     const credLearner = Keypair.generate();
@@ -2000,14 +2004,14 @@ describe("onchain-academy", () => {
       // Airdrop to credential learner
       const sig = await provider.connection.requestAirdrop(
         credLearner.publicKey,
-        10 * LAMPORTS_PER_SOL,
+        10 * LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(sig, "confirmed");
 
       // Create UMI instance and signer from authority wallet
       const umi = createUmi("http://127.0.0.1:8899").use(mplCore());
       const umiAuthority = umi.eddsa.createKeypairFromSecretKey(
-        authority.payer.secretKey,
+        authority.payer.secretKey
       );
       umi.use(signerIdentity(umiCreateSignerFromKeypair(umi, umiAuthority)));
 
@@ -2025,7 +2029,7 @@ describe("onchain-academy", () => {
       // Create course for credential tests
       [credCoursePda] = PublicKey.findProgramAddressSync(
         [Buffer.from("course"), Buffer.from(credCourseId)],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -2056,7 +2060,7 @@ describe("onchain-academy", () => {
         credLearner.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const createAtaIx = createAssociatedTokenAccountInstruction(
@@ -2065,7 +2069,7 @@ describe("onchain-academy", () => {
         credLearner.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
       const tx = new anchor.web3.Transaction().add(createAtaIx);
       await provider.sendAndConfirm(tx);
@@ -2077,7 +2081,7 @@ describe("onchain-academy", () => {
           Buffer.from(credCourseId),
           credLearner.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -2136,7 +2140,7 @@ describe("onchain-academy", () => {
           "Solana Track - Level 1",
           "https://arweave.net/cred-metadata-v1",
           1,
-          new anchor.BN(500),
+          new anchor.BN(500)
         )
         .accountsPartial({
           config: configPda,
@@ -2158,16 +2162,16 @@ describe("onchain-academy", () => {
       const enrollment = await program.account.enrollment.fetch(credEnrollPda);
       expect(enrollment.credentialAsset).to.not.be.null;
       expect(enrollment.credentialAsset.toBase58()).to.equal(
-        credentialKeypair.publicKey.toBase58(),
+        credentialKeypair.publicKey.toBase58()
       );
 
       // Verify the credential NFT exists and is owned by Metaplex Core
       const assetInfo = await provider.connection.getAccountInfo(
-        credentialKeypair.publicKey,
+        credentialKeypair.publicKey
       );
       expect(assetInfo).to.not.be.null;
       expect(assetInfo.owner.toBase58()).to.equal(
-        MPL_CORE_PROGRAM_ID.toBase58(),
+        MPL_CORE_PROGRAM_ID.toBase58()
       );
       // First byte = Key::AssetV1 = 1
       expect(assetInfo.data[0]).to.equal(1);
@@ -2178,13 +2182,13 @@ describe("onchain-academy", () => {
       }).use(mplCore());
       const asset = await fetchAssetV1(
         umi,
-        fromWeb3JsPublicKey(credentialKeypair.publicKey),
+        fromWeb3JsPublicKey(credentialKeypair.publicKey)
       );
 
       expect(asset.name).to.equal("Solana Track - Level 1");
       expect(asset.uri).to.equal("https://arweave.net/cred-metadata-v1");
       expect(asset.owner.toString()).to.equal(
-        fromWeb3JsPublicKey(credLearner.publicKey).toString(),
+        fromWeb3JsPublicKey(credLearner.publicKey).toString()
       );
 
       // Verify frozen (PermanentFreezeDelegate)
@@ -2210,7 +2214,7 @@ describe("onchain-academy", () => {
       const unfinalizedLearner = Keypair.generate();
       const airdropSig = await provider.connection.requestAirdrop(
         unfinalizedLearner.publicKey,
-        5 * LAMPORTS_PER_SOL,
+        5 * LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(airdropSig, "confirmed");
 
@@ -2220,7 +2224,7 @@ describe("onchain-academy", () => {
           Buffer.from(credCourseId),
           unfinalizedLearner.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -2242,7 +2246,7 @@ describe("onchain-academy", () => {
             "Should Fail",
             "https://arweave.net/fail",
             1,
-            new anchor.BN(500),
+            new anchor.BN(500)
           )
           .accountsPartial({
             config: configPda,
@@ -2276,7 +2280,7 @@ describe("onchain-academy", () => {
             "Duplicate",
             "https://arweave.net/dup",
             1,
-            new anchor.BN(500),
+            new anchor.BN(500)
           )
           .accountsPartial({
             config: configPda,
@@ -2308,7 +2312,7 @@ describe("onchain-academy", () => {
           "Solana Track - Level 1 (Updated)",
           "https://arweave.net/cred-metadata-v2",
           2,
-          new anchor.BN(1000),
+          new anchor.BN(1000)
         )
         .accountsPartial({
           config: configPda,
@@ -2331,7 +2335,7 @@ describe("onchain-academy", () => {
       }).use(mplCore());
       const asset = await fetchAssetV1(
         umi,
-        fromWeb3JsPublicKey(credentialKeypair.publicKey),
+        fromWeb3JsPublicKey(credentialKeypair.publicKey)
       );
 
       expect(asset.name).to.equal("Solana Track - Level 1 (Updated)");
@@ -2340,7 +2344,7 @@ describe("onchain-academy", () => {
       // Enrollment credential_asset should remain unchanged
       const enrollment = await program.account.enrollment.fetch(credEnrollPda);
       expect(enrollment.credentialAsset.toBase58()).to.equal(
-        credentialKeypair.publicKey.toBase58(),
+        credentialKeypair.publicKey.toBase58()
       );
     });
 
@@ -2353,7 +2357,7 @@ describe("onchain-academy", () => {
             "Wrong Asset",
             "https://arweave.net/wrong",
             2,
-            new anchor.BN(1000),
+            new anchor.BN(1000)
           )
           .accountsPartial({
             config: configPda,
@@ -2395,14 +2399,14 @@ describe("onchain-academy", () => {
       for (const wallet of [secLearnerA.publicKey, secLearnerB.publicKey]) {
         const sig = await provider.connection.requestAirdrop(
           wallet,
-          5 * LAMPORTS_PER_SOL,
+          5 * LAMPORTS_PER_SOL
         );
         await provider.connection.confirmTransaction(sig, "confirmed");
       }
 
       [secCoursePda] = PublicKey.findProgramAddressSync(
         [Buffer.from("course"), Buffer.from(secCourseId)],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -2433,7 +2437,7 @@ describe("onchain-academy", () => {
           Buffer.from(secCourseId),
           secLearnerA.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -2453,7 +2457,7 @@ describe("onchain-academy", () => {
         secLearnerA.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       secLearnerBTokenAccount = getAssociatedTokenAddressSync(
@@ -2461,7 +2465,7 @@ describe("onchain-academy", () => {
         secLearnerB.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const createAtaAIx = createAssociatedTokenAccountInstruction(
@@ -2470,7 +2474,7 @@ describe("onchain-academy", () => {
         secLearnerA.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const createAtaBIx = createAssociatedTokenAccountInstruction(
@@ -2479,7 +2483,7 @@ describe("onchain-academy", () => {
         secLearnerB.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const tx = new anchor.web3.Transaction()
@@ -2550,13 +2554,13 @@ describe("onchain-academy", () => {
       const zeroCourseId = "zero-bonus-course";
       const [zeroCoursePda] = PublicKey.findProgramAddressSync(
         [Buffer.from("course"), Buffer.from(zeroCourseId)],
-        program.programId,
+        program.programId
       );
 
       const zeroLearner = Keypair.generate();
       const airdropSig = await provider.connection.requestAirdrop(
         zeroLearner.publicKey,
-        5 * LAMPORTS_PER_SOL,
+        5 * LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(airdropSig, "confirmed");
 
@@ -2588,7 +2592,7 @@ describe("onchain-academy", () => {
         zeroLearner.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const createAtaIx = createAssociatedTokenAccountInstruction(
@@ -2597,7 +2601,7 @@ describe("onchain-academy", () => {
         zeroLearner.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
       const ataT = new anchor.web3.Transaction().add(createAtaIx);
       await provider.sendAndConfirm(ataT);
@@ -2608,7 +2612,7 @@ describe("onchain-academy", () => {
           Buffer.from(zeroCourseId),
           zeroLearner.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -2666,10 +2670,10 @@ describe("onchain-academy", () => {
         provider.connection,
         zeroLearnerTokenAccount,
         "confirmed",
-        TOKEN_2022_PROGRAM_ID,
+        TOKEN_2022_PROGRAM_ID
       );
       expect(Number(learnerAta.amount)).to.equal(
-        75 * 2 + Math.floor((75 * 2) / 2),
+        75 * 2 + Math.floor((75 * 2) / 2)
       );
     });
 
@@ -2677,13 +2681,13 @@ describe("onchain-academy", () => {
       const singleId = "single-lesson-course";
       const [singleCoursePda] = PublicKey.findProgramAddressSync(
         [Buffer.from("course"), Buffer.from(singleId)],
-        program.programId,
+        program.programId
       );
 
       const singleLearner = Keypair.generate();
       const airdropSig = await provider.connection.requestAirdrop(
         singleLearner.publicKey,
-        5 * LAMPORTS_PER_SOL,
+        5 * LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(airdropSig, "confirmed");
 
@@ -2714,7 +2718,7 @@ describe("onchain-academy", () => {
         singleLearner.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const createAtaIx = createAssociatedTokenAccountInstruction(
@@ -2723,7 +2727,7 @@ describe("onchain-academy", () => {
         singleLearner.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
       const ataT = new anchor.web3.Transaction().add(createAtaIx);
       await provider.sendAndConfirm(ataT);
@@ -2734,7 +2738,7 @@ describe("onchain-academy", () => {
           Buffer.from(singleId),
           singleLearner.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -2783,8 +2787,9 @@ describe("onchain-academy", () => {
         .rpc();
       await provider.connection.confirmTransaction(fsig, "confirmed");
 
-      const enrollment =
-        await program.account.enrollment.fetch(singleEnrollPda);
+      const enrollment = await program.account.enrollment.fetch(
+        singleEnrollPda
+      );
       expect(enrollment.completedAt).to.not.be.null;
 
       const course = await program.account.course.fetch(singleCoursePda);
@@ -2795,7 +2800,7 @@ describe("onchain-academy", () => {
         provider.connection,
         singleLearnerTokenAccount,
         "confirmed",
-        TOKEN_2022_PROGRAM_ID,
+        TOKEN_2022_PROGRAM_ID
       );
       expect(Number(learnerAta.amount)).to.equal(200 + 100);
     });
@@ -2806,7 +2811,7 @@ describe("onchain-academy", () => {
   // ===========================================================================
   describe("15. Minter Roles", () => {
     const MPL_CORE_PROGRAM_ID = new PublicKey(
-      "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d",
+      "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
     );
 
     const testMinter = Keypair.generate();
@@ -2817,13 +2822,13 @@ describe("onchain-academy", () => {
     before(async () => {
       [testMinterRolePda] = PublicKey.findProgramAddressSync(
         [Buffer.from("minter"), testMinter.publicKey.toBuffer()],
-        program.programId,
+        program.programId
       );
 
       for (const wallet of [testMinter.publicKey, minterRecipient.publicKey]) {
         const sig = await provider.connection.requestAirdrop(
           wallet,
-          5 * LAMPORTS_PER_SOL,
+          5 * LAMPORTS_PER_SOL
         );
         await provider.connection.confirmTransaction(sig, "confirmed");
       }
@@ -2834,7 +2839,7 @@ describe("onchain-academy", () => {
         minterRecipient.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const createAtaIx = createAssociatedTokenAccountInstruction(
@@ -2843,7 +2848,7 @@ describe("onchain-academy", () => {
         minterRecipient.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
       const tx = new anchor.web3.Transaction().add(createAtaIx);
       await provider.sendAndConfirm(tx);
@@ -2892,7 +2897,7 @@ describe("onchain-academy", () => {
         provider.connection,
         minterRecipientTokenAccount,
         "confirmed",
-        TOKEN_2022_PROGRAM_ID,
+        TOKEN_2022_PROGRAM_ID
       );
       expect(Number(ata.amount)).to.equal(500);
 
@@ -2944,7 +2949,7 @@ describe("onchain-academy", () => {
 
     it("revoke_minter", async () => {
       const balanceBefore = await provider.connection.getBalance(
-        authority.publicKey,
+        authority.publicKey
       );
 
       await program.methods
@@ -2960,7 +2965,7 @@ describe("onchain-academy", () => {
       expect(info).to.be.null;
 
       const balanceAfter = await provider.connection.getBalance(
-        authority.publicKey,
+        authority.publicKey
       );
       expect(balanceAfter).to.be.greaterThan(balanceBefore);
     });
@@ -2993,7 +2998,7 @@ describe("onchain-academy", () => {
   // ===========================================================================
   describe("16. Achievement System", () => {
     const MPL_CORE_PROGRAM_ID = new PublicKey(
-      "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d",
+      "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
     );
 
     const achievementId = "first-course";
@@ -3007,7 +3012,7 @@ describe("onchain-academy", () => {
     before(async () => {
       [achievementTypePda] = PublicKey.findProgramAddressSync(
         [Buffer.from("achievement"), Buffer.from(achievementId)],
-        program.programId,
+        program.programId
       );
 
       [achievementReceiptPda] = PublicKey.findProgramAddressSync(
@@ -3016,12 +3021,12 @@ describe("onchain-academy", () => {
           Buffer.from(achievementId),
           achievementRecipient.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       const sig = await provider.connection.requestAirdrop(
         achievementRecipient.publicKey,
-        5 * LAMPORTS_PER_SOL,
+        5 * LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(sig, "confirmed");
 
@@ -3031,7 +3036,7 @@ describe("onchain-academy", () => {
         achievementRecipient.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const createAtaIx = createAssociatedTokenAccountInstruction(
@@ -3040,7 +3045,7 @@ describe("onchain-academy", () => {
         achievementRecipient.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
       const tx = new anchor.web3.Transaction().add(createAtaIx);
       await provider.sendAndConfirm(tx);
@@ -3069,16 +3074,17 @@ describe("onchain-academy", () => {
         .signers([achievementCollectionKeypair])
         .rpc();
 
-      const achievement =
-        await program.account.achievementType.fetch(achievementTypePda);
+      const achievement = await program.account.achievementType.fetch(
+        achievementTypePda
+      );
       expect(achievement.achievementId).to.equal(achievementId);
       expect(achievement.name).to.equal("First Course Completed");
       expect(achievement.metadataUri).to.equal("https://arweave.net/test");
       expect(achievement.collection.toBase58()).to.equal(
-        achievementCollectionKeypair.publicKey.toBase58(),
+        achievementCollectionKeypair.publicKey.toBase58()
       );
       expect(achievement.creator.toBase58()).to.equal(
-        authority.publicKey.toBase58(),
+        authority.publicKey.toBase58()
       );
       expect(achievement.maxSupply).to.equal(100);
       expect(achievement.currentSupply).to.equal(0);
@@ -3091,7 +3097,7 @@ describe("onchain-academy", () => {
       const badAchId = "zero-xp-ach";
       const [badAchPda] = PublicKey.findProgramAddressSync(
         [Buffer.from("achievement"), Buffer.from(badAchId)],
-        program.programId,
+        program.programId
       );
       const badCollectionKeypair = Keypair.generate();
 
@@ -3128,7 +3134,7 @@ describe("onchain-academy", () => {
       // Use the backend minter role (auto-registered during initialize)
       const [backendMinterRole] = PublicKey.findProgramAddressSync(
         [Buffer.from("minter"), authority.publicKey.toBuffer()],
-        program.programId,
+        program.programId
       );
 
       const sig = await program.methods
@@ -3155,10 +3161,10 @@ describe("onchain-academy", () => {
 
       // Verify AchievementReceipt created
       const receipt = await program.account.achievementReceipt.fetch(
-        achievementReceiptPda,
+        achievementReceiptPda
       );
       expect(receipt.asset.toBase58()).to.equal(
-        assetKeypair.publicKey.toBase58(),
+        assetKeypair.publicKey.toBase58()
       );
       expect(receipt.awardedAt.toNumber()).to.be.greaterThan(0);
 
@@ -3168,12 +3174,12 @@ describe("onchain-academy", () => {
       }).use(mplCore());
       const asset = await fetchAssetV1(
         umi,
-        fromWeb3JsPublicKey(assetKeypair.publicKey),
+        fromWeb3JsPublicKey(assetKeypair.publicKey)
       );
       expect(asset.name).to.equal("First Course Completed");
       expect(asset.uri).to.equal("https://arweave.net/test");
       expect(asset.owner.toString()).to.equal(
-        fromWeb3JsPublicKey(achievementRecipient.publicKey).toString(),
+        fromWeb3JsPublicKey(achievementRecipient.publicKey).toString()
       );
       expect(asset.permanentFreezeDelegate).to.exist;
       expect(asset.permanentFreezeDelegate.frozen).to.equal(true);
@@ -3191,13 +3197,14 @@ describe("onchain-academy", () => {
         provider.connection,
         achievementRecipientTokenAccount,
         "confirmed",
-        TOKEN_2022_PROGRAM_ID,
+        TOKEN_2022_PROGRAM_ID
       );
       expect(Number(ata.amount)).to.equal(200);
 
       // Verify achievement_type.current_supply incremented
-      const achievement =
-        await program.account.achievementType.fetch(achievementTypePda);
+      const achievement = await program.account.achievementType.fetch(
+        achievementTypePda
+      );
       expect(achievement.currentSupply).to.equal(1);
     });
 
@@ -3205,7 +3212,7 @@ describe("onchain-academy", () => {
       const secondAssetKeypair = Keypair.generate();
       const [backendMinterRole] = PublicKey.findProgramAddressSync(
         [Buffer.from("minter"), authority.publicKey.toBuffer()],
-        program.programId,
+        program.programId
       );
 
       try {
@@ -3246,8 +3253,9 @@ describe("onchain-academy", () => {
         })
         .rpc();
 
-      const achievement =
-        await program.account.achievementType.fetch(achievementTypePda);
+      const achievement = await program.account.achievementType.fetch(
+        achievementTypePda
+      );
       expect(achievement.isActive).to.equal(false);
     });
 
@@ -3255,7 +3263,7 @@ describe("onchain-academy", () => {
       const anotherRecipient = Keypair.generate();
       const airdropSig = await provider.connection.requestAirdrop(
         anotherRecipient.publicKey,
-        2 * LAMPORTS_PER_SOL,
+        2 * LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(airdropSig, "confirmed");
 
@@ -3264,7 +3272,7 @@ describe("onchain-academy", () => {
         anotherRecipient.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const createAtaIx = createAssociatedTokenAccountInstruction(
@@ -3273,7 +3281,7 @@ describe("onchain-academy", () => {
         anotherRecipient.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
       const ataTx = new anchor.web3.Transaction().add(createAtaIx);
       await provider.sendAndConfirm(ataTx);
@@ -3284,12 +3292,12 @@ describe("onchain-academy", () => {
           Buffer.from(achievementId),
           anotherRecipient.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       const [backendMinterRole] = PublicKey.findProgramAddressSync(
         [Buffer.from("minter"), authority.publicKey.toBuffer()],
-        program.programId,
+        program.programId
       );
 
       const anotherAsset = Keypair.generate();
@@ -3326,7 +3334,7 @@ describe("onchain-academy", () => {
       const limitedAchId = "limited-ach";
       const [limitedAchPda] = PublicKey.findProgramAddressSync(
         [Buffer.from("achievement"), Buffer.from(limitedAchId)],
-        program.programId,
+        program.programId
       );
       const limitedCollectionKeypair = Keypair.generate();
 
@@ -3353,14 +3361,14 @@ describe("onchain-academy", () => {
 
       const [backendMinterRole] = PublicKey.findProgramAddressSync(
         [Buffer.from("minter"), authority.publicKey.toBuffer()],
-        program.programId,
+        program.programId
       );
 
       // First award succeeds
       const firstRecipient = Keypair.generate();
       const airdropSig1 = await provider.connection.requestAirdrop(
         firstRecipient.publicKey,
-        2 * LAMPORTS_PER_SOL,
+        2 * LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(airdropSig1, "confirmed");
 
@@ -3369,7 +3377,7 @@ describe("onchain-academy", () => {
         firstRecipient.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
       const createAta1Ix = createAssociatedTokenAccountInstruction(
         authority.publicKey,
@@ -3377,10 +3385,10 @@ describe("onchain-academy", () => {
         firstRecipient.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
       await provider.sendAndConfirm(
-        new anchor.web3.Transaction().add(createAta1Ix),
+        new anchor.web3.Transaction().add(createAta1Ix)
       );
 
       const [firstReceiptPda] = PublicKey.findProgramAddressSync(
@@ -3389,7 +3397,7 @@ describe("onchain-academy", () => {
           Buffer.from(limitedAchId),
           firstRecipient.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
       const firstAsset = Keypair.generate();
 
@@ -3415,15 +3423,16 @@ describe("onchain-academy", () => {
         .rpc();
       await provider.connection.confirmTransaction(sig, "confirmed");
 
-      const achievement =
-        await program.account.achievementType.fetch(limitedAchPda);
+      const achievement = await program.account.achievementType.fetch(
+        limitedAchPda
+      );
       expect(achievement.currentSupply).to.equal(1);
 
       // Second award to different recipient fails with supply exhausted
       const secondRecipient = Keypair.generate();
       const airdropSig2 = await provider.connection.requestAirdrop(
         secondRecipient.publicKey,
-        2 * LAMPORTS_PER_SOL,
+        2 * LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(airdropSig2, "confirmed");
 
@@ -3432,7 +3441,7 @@ describe("onchain-academy", () => {
         secondRecipient.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
       const createAta2Ix = createAssociatedTokenAccountInstruction(
         authority.publicKey,
@@ -3440,10 +3449,10 @@ describe("onchain-academy", () => {
         secondRecipient.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
       await provider.sendAndConfirm(
-        new anchor.web3.Transaction().add(createAta2Ix),
+        new anchor.web3.Transaction().add(createAta2Ix)
       );
 
       const [secondReceiptPda] = PublicKey.findProgramAddressSync(
@@ -3452,7 +3461,7 @@ describe("onchain-academy", () => {
           Buffer.from(limitedAchId),
           secondRecipient.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
       const secondAsset = Keypair.generate();
 
@@ -3481,7 +3490,7 @@ describe("onchain-academy", () => {
       } catch (err) {
         const anchorErr = err as AnchorError;
         expect(anchorErr.error.errorCode.code).to.equal(
-          "AchievementSupplyExhausted",
+          "AchievementSupplyExhausted"
         );
       }
     });
@@ -3500,13 +3509,13 @@ describe("onchain-academy", () => {
     before(async () => {
       const sig = await provider.connection.requestAirdrop(
         bitmapLearner.publicKey,
-        5 * LAMPORTS_PER_SOL,
+        5 * LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(sig, "confirmed");
 
       [bitmapCoursePda] = PublicKey.findProgramAddressSync(
         [Buffer.from("course"), Buffer.from(bitmapCourseId)],
-        program.programId,
+        program.programId
       );
 
       // Create course with 65 lessons (crosses u64 word boundary at index 64)
@@ -3537,7 +3546,7 @@ describe("onchain-academy", () => {
         bitmapLearner.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const createAtaIx = createAssociatedTokenAccountInstruction(
@@ -3546,10 +3555,10 @@ describe("onchain-academy", () => {
         bitmapLearner.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
       await provider.sendAndConfirm(
-        new anchor.web3.Transaction().add(createAtaIx),
+        new anchor.web3.Transaction().add(createAtaIx)
       );
 
       [bitmapEnrollPda] = PublicKey.findProgramAddressSync(
@@ -3558,7 +3567,7 @@ describe("onchain-academy", () => {
           Buffer.from(bitmapCourseId),
           bitmapLearner.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -3620,7 +3629,7 @@ describe("onchain-academy", () => {
         provider.connection,
         bitmapLearnerTokenAccount,
         "confirmed",
-        TOKEN_2022_PROGRAM_ID,
+        TOKEN_2022_PROGRAM_ID
       );
       expect(Number(ata.amount)).to.equal(10 * 2);
     });
@@ -3639,13 +3648,13 @@ describe("onchain-academy", () => {
     before(async () => {
       const sig = await provider.connection.requestAirdrop(
         reEnrollLearner.publicKey,
-        5 * LAMPORTS_PER_SOL,
+        5 * LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(sig, "confirmed");
 
       [reEnrollCoursePda] = PublicKey.findProgramAddressSync(
         [Buffer.from("course"), Buffer.from(reEnrollCourseId)],
-        program.programId,
+        program.programId
       );
 
       await program.methods
@@ -3675,7 +3684,7 @@ describe("onchain-academy", () => {
         reEnrollLearner.publicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
 
       const createAtaIx = createAssociatedTokenAccountInstruction(
@@ -3684,10 +3693,10 @@ describe("onchain-academy", () => {
         reEnrollLearner.publicKey,
         xpMintKeypair.publicKey,
         TOKEN_2022_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
       );
       await provider.sendAndConfirm(
-        new anchor.web3.Transaction().add(createAtaIx),
+        new anchor.web3.Transaction().add(createAtaIx)
       );
 
       [reEnrollEnrollPda] = PublicKey.findProgramAddressSync(
@@ -3696,7 +3705,7 @@ describe("onchain-academy", () => {
           Buffer.from(reEnrollCourseId),
           reEnrollLearner.publicKey.toBuffer(),
         ],
-        program.programId,
+        program.programId
       );
 
       // Enroll, complete, finalize, close
@@ -3754,8 +3763,9 @@ describe("onchain-academy", () => {
         .rpc();
 
       // Verify closed
-      const closedInfo =
-        await provider.connection.getAccountInfo(reEnrollEnrollPda);
+      const closedInfo = await provider.connection.getAccountInfo(
+        reEnrollEnrollPda
+      );
       expect(closedInfo).to.be.null;
     });
 
@@ -3771,10 +3781,11 @@ describe("onchain-academy", () => {
         .signers([reEnrollLearner])
         .rpc();
 
-      const enrollment =
-        await program.account.enrollment.fetch(reEnrollEnrollPda);
+      const enrollment = await program.account.enrollment.fetch(
+        reEnrollEnrollPda
+      );
       expect(enrollment.course.toBase58()).to.equal(
-        reEnrollCoursePda.toBase58(),
+        reEnrollCoursePda.toBase58()
       );
       expect(enrollment.completedAt).to.be.null;
       // Lesson flags should be reset to zero
@@ -3794,20 +3805,20 @@ describe("onchain-academy", () => {
     before(async () => {
       const sig = await provider.connection.requestAirdrop(
         rotationMinter.publicKey,
-        2 * LAMPORTS_PER_SOL,
+        2 * LAMPORTS_PER_SOL
       );
       await provider.connection.confirmTransaction(sig, "confirmed");
 
       [rotationMinterRolePda] = PublicKey.findProgramAddressSync(
         [Buffer.from("minter"), authority.publicKey.toBuffer()],
-        program.programId,
+        program.programId
       );
     });
 
     it("backend_signer rotation deactivates old MinterRole via remaining_accounts", async () => {
       // Verify old minter role is active before rotation
       const roleBefore = await program.account.minterRole.fetch(
-        rotationMinterRolePda,
+        rotationMinterRolePda
       );
       expect(roleBefore.isActive).to.equal(true);
 
@@ -3833,14 +3844,14 @@ describe("onchain-academy", () => {
 
       // Verify old MinterRole is deactivated
       const roleAfter = await program.account.minterRole.fetch(
-        rotationMinterRolePda,
+        rotationMinterRolePda
       );
       expect(roleAfter.isActive).to.equal(false);
 
       // Verify config was updated
       const config = await program.account.config.fetch(configPda);
       expect(config.backendSigner.toBase58()).to.equal(
-        newSigner.publicKey.toBase58(),
+        newSigner.publicKey.toBase58()
       );
 
       // Restore backend signer to authority for subsequent tests
@@ -3859,7 +3870,7 @@ describe("onchain-academy", () => {
       // for other tests that might run after this.
       // Since it's still allocated, we can't re-init it. Just confirm it's deactivated.
       const roleFinal = await program.account.minterRole.fetch(
-        rotationMinterRolePda,
+        rotationMinterRolePda
       );
       expect(roleFinal.isActive).to.equal(false);
     });

@@ -44,7 +44,7 @@ async function postJson(path: string, body: unknown): Promise<unknown> {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
-    },
+    }
   );
 
   const payload = (await response.json()) as unknown;
@@ -121,7 +121,7 @@ export async function saveProfileWithWalletAuth(input: {
   }
 
   const walletPublicKey = Array.from(
-    getAddressEncoder().encode(address(input.wallet)),
+    getAddressEncoder().encode(address(input.wallet))
   );
   const output = {
     account: {
@@ -145,7 +145,7 @@ export async function saveProfileWithWalletAuth(input: {
       avatarUrl: input.avatarUrl.trim(),
       socialLinks: input.socialLinks,
       visibility: input.visibility,
-    }),
+    })
   );
 
   if (!result.ok || !result.profile) {

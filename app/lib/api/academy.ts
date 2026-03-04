@@ -21,14 +21,14 @@ export class AcademyApiError extends Error {
 
 async function handleResponse<T>(
   response: Response,
-  parse: (data: unknown) => T,
+  parse: (data: unknown) => T
 ): Promise<T> {
   const payload = (await response.json()) as unknown;
   if (!response.ok) {
     const parsed = (payload as { ok?: boolean; error?: string })?.error;
     throw new AcademyApiError(
       typeof parsed === "string" ? parsed : "API_ERROR",
-      response.status,
+      response.status
     );
   }
   return parse(payload);
@@ -42,7 +42,7 @@ export async function getConfig(): Promise<{
   const res = await fetch(`${getBaseUrl()}/config`);
   return handleResponse(
     res,
-    (d) => d as { xpMint: string; backendSigner?: string; authority?: string },
+    (d) => d as { xpMint: string; backendSigner?: string; authority?: string }
   );
 }
 
@@ -66,7 +66,7 @@ export async function getCourses(activeOnly = true): Promise<
         xpPerLesson: number;
         isActive: boolean;
         creator: string;
-      }>,
+      }>
   );
 }
 
@@ -78,7 +78,7 @@ export async function getCourse(courseId: string): Promise<{
   creator: string;
 } | null> {
   const res = await fetch(
-    `${getBaseUrl()}/courses/${encodeURIComponent(courseId)}`,
+    `${getBaseUrl()}/courses/${encodeURIComponent(courseId)}`
   );
   if (res.status === 404) return null;
   return handleResponse(
@@ -90,19 +90,21 @@ export async function getCourse(courseId: string): Promise<{
         xpPerLesson: number;
         isActive: boolean;
         creator: string;
-      },
+      }
   );
 }
 
 export async function getEnrollment(
   courseId: string,
-  learner: string,
+  learner: string
 ): Promise<{
   lessonFlags: bigint[];
   completedAt: bigint | null;
   credentialAsset: string | null;
 } | null> {
-  const url = `${getBaseUrl()}/courses/${encodeURIComponent(courseId)}/enrollment?learner=${encodeURIComponent(learner)}`;
+  const url = `${getBaseUrl()}/courses/${encodeURIComponent(
+    courseId
+  )}/enrollment?learner=${encodeURIComponent(learner)}`;
   const res = await fetch(url);
   if (res.status === 404) return null;
   return handleResponse(
@@ -112,15 +114,15 @@ export async function getEnrollment(
         lessonFlags: bigint[];
         completedAt: bigint | null;
         credentialAsset: string | null;
-      },
+      }
   );
 }
 
 export async function getXpBalance(
-  learner: string,
+  learner: string
 ): Promise<{ balance: number; ata: string }> {
   const res = await fetch(
-    `${getBaseUrl()}/xp-balance?learner=${encodeURIComponent(learner)}`,
+    `${getBaseUrl()}/xp-balance?learner=${encodeURIComponent(learner)}`
   );
   return handleResponse(res, (d) => d as { balance: number; ata: string });
 }
@@ -133,7 +135,7 @@ export async function getLeaderboard(): Promise<
   });
   return handleResponse(
     res,
-    (d) => d as Array<{ rank: number; wallet: string; xp: number }>,
+    (d) => d as Array<{ rank: number; wallet: string; xp: number }>
   );
 }
 
@@ -152,26 +154,26 @@ export type Profile = {
 
 export async function getProfileMe(learner: string): Promise<Profile | null> {
   const res = await fetch(
-    `${getBaseUrl()}/profile/me?learner=${encodeURIComponent(learner)}`,
+    `${getBaseUrl()}/profile/me?learner=${encodeURIComponent(learner)}`
   );
   return handleResponse(res, (d) => d as Profile | null);
 }
 
 export async function getProfileByWallet(
-  wallet: string,
+  wallet: string
 ): Promise<Profile | null> {
   const res = await fetch(
-    `${getBaseUrl()}/profile/by-wallet/${encodeURIComponent(wallet)}`,
+    `${getBaseUrl()}/profile/by-wallet/${encodeURIComponent(wallet)}`
   );
   if (res.status === 404) return null;
   return handleResponse(res, (d) => d as Profile);
 }
 
 export async function getProfileByUsername(
-  username: string,
+  username: string
 ): Promise<Profile | null> {
   const res = await fetch(
-    `${getBaseUrl()}/profile/by-username/${encodeURIComponent(username)}`,
+    `${getBaseUrl()}/profile/by-username/${encodeURIComponent(username)}`
   );
   if (res.status === 404) return null;
   return handleResponse(res, (d) => d as Profile);
@@ -189,7 +191,7 @@ export type UpdateProfileInput = {
 };
 
 export async function updateProfile(
-  input: UpdateProfileInput,
+  input: UpdateProfileInput
 ): Promise<{ ok: boolean; profile?: Profile; error?: string }> {
   const res = await fetch(`${getBaseUrl()}/profile`, {
     method: "PUT",
@@ -218,10 +220,12 @@ export type CompletedEnrollment = {
 };
 
 export async function getCompletedCourses(
-  walletOrUsername: string,
+  walletOrUsername: string
 ): Promise<CompletedEnrollment[]> {
   const res = await fetch(
-    `${getBaseUrl()}/profile/${encodeURIComponent(walletOrUsername)}/completed-courses`,
+    `${getBaseUrl()}/profile/${encodeURIComponent(
+      walletOrUsername
+    )}/completed-courses`
   );
   if (res.status === 404) return [];
   return handleResponse(res, (d) => d as CompletedEnrollment[]);
@@ -236,7 +240,7 @@ export type Credential = {
 
 export async function getCredentials(wallet: string): Promise<Credential[]> {
   const res = await fetch(
-    `${getBaseUrl()}/profile/${encodeURIComponent(wallet)}/credentials`,
+    `${getBaseUrl()}/profile/${encodeURIComponent(wallet)}/credentials`
   );
   return handleResponse(res, (d) => d as Credential[]);
 }
@@ -250,7 +254,7 @@ export type Achievement = {
 
 export async function getAchievements(wallet: string): Promise<Achievement[]> {
   const res = await fetch(
-    `${getBaseUrl()}/profile/${encodeURIComponent(wallet)}/achievements`,
+    `${getBaseUrl()}/profile/${encodeURIComponent(wallet)}/achievements`
   );
   return handleResponse(res, (d) => d as Achievement[]);
 }

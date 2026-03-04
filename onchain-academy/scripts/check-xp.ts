@@ -12,12 +12,12 @@ anchor.setProvider(provider);
 const program = anchor.workspace.onchainAcademy as Program<OnchainAcademy>;
 
 const wallet = new PublicKey(
-  process.argv[2] || provider.wallet.publicKey.toBase58(),
+  process.argv[2] || provider.wallet.publicKey.toBase58()
 );
 
 const [configPda] = PublicKey.findProgramAddressSync(
   [Buffer.from("config")],
-  program.programId,
+  program.programId
 );
 
 async function main() {
@@ -26,7 +26,7 @@ async function main() {
     config.xpMint,
     wallet,
     false,
-    TOKEN_2022_PROGRAM_ID,
+    TOKEN_2022_PROGRAM_ID
   );
 
   try {

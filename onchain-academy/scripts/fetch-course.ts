@@ -11,7 +11,7 @@ const courseId = process.argv[2] || "solana-mock-test";
 
 const [coursePda] = PublicKey.findProgramAddressSync(
   [Buffer.from("course"), Buffer.from(courseId)],
-  program.programId,
+  program.programId
 );
 
 async function main() {
@@ -28,7 +28,7 @@ async function main() {
   console.log("Track Level:             ", course.trackLevel);
   console.log(
     "Prerequisite:            ",
-    course.prerequisite?.toBase58() || "none",
+    course.prerequisite?.toBase58() || "none"
   );
   console.log("Creator Reward XP:       ", course.creatorRewardXp);
   console.log("Min Completions (reward):", course.minCompletionsForReward);
@@ -37,11 +37,11 @@ async function main() {
   console.log("Active:                  ", course.isActive);
   console.log(
     "Created:                 ",
-    new Date(course.createdAt.toNumber() * 1000).toISOString(),
+    new Date(course.createdAt.toNumber() * 1000).toISOString()
   );
   console.log(
     "Updated:                 ",
-    new Date(course.updatedAt.toNumber() * 1000).toISOString(),
+    new Date(course.updatedAt.toNumber() * 1000).toISOString()
   );
 }
 

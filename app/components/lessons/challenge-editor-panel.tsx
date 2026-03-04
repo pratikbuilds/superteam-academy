@@ -57,7 +57,7 @@ export function ChallengeEditorPanel({ lesson, onAllTestsPass }: Props) {
         if (passed) onAllTestsPass();
       } catch (runError) {
         setError(
-          runError instanceof Error ? runError.message : "Execution failed.",
+          runError instanceof Error ? runError.message : "Execution failed."
         );
       } finally {
         setRunning(false);

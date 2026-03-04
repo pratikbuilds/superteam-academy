@@ -84,12 +84,12 @@ export function ChallengeLessonView({ course, lesson, lessonContext }: Props) {
                 {completed
                   ? "Completed"
                   : isMarkingComplete
-                    ? "Completing..."
-                    : !connected
-                      ? "Connect wallet"
-                      : !enrolled
-                        ? "Enroll first"
-                        : t("markComplete")}
+                  ? "Completing..."
+                  : !connected
+                  ? "Connect wallet"
+                  : !enrolled
+                  ? "Enroll first"
+                  : t("markComplete")}
               </Button>
 
               <div className="mt-2.5 flex items-center justify-between gap-2">

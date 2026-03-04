@@ -64,8 +64,8 @@ function getFilenameFromClass(className?: string): string | undefined {
     (lang === "ts" || lang === "typescript"
       ? "example.ts"
       : lang === "rust"
-        ? "example.rs"
-        : `example.${lang}`)
+      ? "example.rs"
+      : `example.${lang}`)
   );
 }
 
@@ -104,7 +104,7 @@ const markdownComponents = {
       <code
         className={cn(
           "rounded bg-muted px-1.5 py-0.5 font-mono text-sm text-foreground border border-border/60",
-          className,
+          className
         )}
         {...props}
       >
@@ -133,7 +133,7 @@ export function LessonMarkdown({ content, className }: Props) {
     <div
       className={cn(
         "prose prose-neutral dark:prose-invert max-w-none",
-        className,
+        className
       )}
     >
       <ReactMarkdown

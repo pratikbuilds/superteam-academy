@@ -49,7 +49,7 @@ export async function sendEnrollTransaction(input: {
   const maybeCourse = await fetchMaybeCourse(input.rpc, coursePda);
   if (!maybeCourse.exists) {
     throw new Error(
-      `Course "${input.courseId}" is not initialized on the selected cluster/RPC.`,
+      `Course "${input.courseId}" is not initialized on the selected cluster/RPC.`
     );
   }
 
@@ -73,12 +73,12 @@ export async function sendEnrollTransaction(input: {
     (message) => setTransactionMessageFeePayerSigner(input.signer, message),
     (message) =>
       setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, message),
-    (message) =>
-      appendTransactionMessageInstruction(enrollInstruction, message),
+    (message) => appendTransactionMessageInstruction(enrollInstruction, message)
   );
 
-  const signedTransaction =
-    await signTransactionMessageWithSigners(transactionMessage);
+  const signedTransaction = await signTransactionMessageWithSigners(
+    transactionMessage
+  );
 
   const sendAndConfirmTransaction = sendAndConfirmTransactionFactory({
     rpc: input.rpc,
@@ -87,7 +87,7 @@ export async function sendEnrollTransaction(input: {
 
   await sendAndConfirmTransaction(
     signedTransaction as Parameters<typeof sendAndConfirmTransaction>[0],
-    { commitment: "confirmed" },
+    { commitment: "confirmed" }
   );
 
   return getSignatureFromTransaction(signedTransaction);

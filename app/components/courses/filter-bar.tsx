@@ -71,7 +71,7 @@ export function FilterBar({
         router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
       });
     },
-    [searchParams, router, pathname, startTransition],
+    [searchParams, router, pathname, startTransition]
   );
 
   const clearAll = useCallback(() => {
@@ -94,7 +94,7 @@ export function FilterBar({
             if (debounceRef.current) clearTimeout(debounceRef.current);
             debounceRef.current = setTimeout(
               () => updateParams("q", value),
-              300,
+              300
             );
           }}
           className="h-11 rounded-lg border-border/80 bg-white pl-10 text-sm shadow-sm placeholder:text-muted-foreground/70 focus-visible:bg-white"
@@ -119,7 +119,7 @@ export function FilterBar({
                 className={cn(
                   "h-8 rounded-lg px-3 text-xs font-semibold tracking-[0.01em] text-muted-foreground",
                   "hover:bg-accent/80 hover:text-foreground",
-                  "data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:shadow-sm",
+                  "data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:shadow-sm"
                 )}
               >
                 {opt.label}

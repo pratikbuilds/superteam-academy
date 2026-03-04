@@ -61,7 +61,7 @@ export function LeaderboardTable({
                 className={cn(
                   "grid grid-cols-[minmax(4rem,1fr)_1fr_minmax(5rem,1fr)] items-center gap-4 px-4 py-3.5 transition-colors sm:px-6",
                   "hover:bg-muted/30",
-                  style?.row,
+                  style?.row
                 )}
               >
                 {/* Rank */}
@@ -70,7 +70,7 @@ export function LeaderboardTable({
                     <span
                       className={cn(
                         "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border font-heading font-bold",
-                        style.badge,
+                        style.badge
                       )}
                       aria-hidden
                     >
@@ -101,7 +101,7 @@ export function LeaderboardTable({
                     "font-mono text-sm tabular-nums",
                     isTopThree
                       ? "font-semibold text-foreground"
-                      : "text-muted-foreground",
+                      : "text-muted-foreground"
                   )}
                 >
                   {truncateAddress(entry.wallet)}
@@ -113,7 +113,7 @@ export function LeaderboardTable({
                     "text-right font-mono text-sm tabular-nums",
                     isTopThree
                       ? "font-bold text-primary"
-                      : "font-medium text-muted-foreground",
+                      : "font-medium text-muted-foreground"
                   )}
                 >
                   {formatXp(entry.xp)}

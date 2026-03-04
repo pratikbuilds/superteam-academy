@@ -1,6 +1,6 @@
 export function isLessonComplete(
   lessonFlags: readonly bigint[],
-  lessonIndex: number,
+  lessonIndex: number
 ): boolean {
   const one = BigInt(1);
   const zero = BigInt(0);
@@ -12,7 +12,7 @@ export function isLessonComplete(
 
 export function getCompletedLessonIndices(
   lessonFlags: readonly bigint[],
-  totalLessons: number,
+  totalLessons: number
 ): number[] {
   const completed: number[] = [];
   for (let lessonIndex = 0; lessonIndex < totalLessons; lessonIndex += 1) {

@@ -90,12 +90,12 @@ export function ContentLessonView({ course, lesson, lessonContext }: Props) {
                 {completed
                   ? "✓ Completed"
                   : isMarkingComplete
-                    ? "Completing..."
-                    : !connected
-                      ? "Connect wallet"
-                      : !enrolled
-                        ? "Enroll first"
-                        : t("markComplete")}
+                  ? "Completing..."
+                  : !connected
+                  ? "Connect wallet"
+                  : !enrolled
+                  ? "Enroll first"
+                  : t("markComplete")}
               </Button>
             </div>
             <nav

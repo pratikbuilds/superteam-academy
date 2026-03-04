@@ -56,7 +56,7 @@ function Combobox<T>({
       value,
       setValue,
     }),
-    [items, itemToStringValue, open, value],
+    [items, itemToStringValue, open, value]
   );
   return (
     <ComboboxContext.Provider value={ctx as ComboboxContextValue<unknown>}>
@@ -180,7 +180,7 @@ function ComboboxItem({
     <span
       className={cn(
         "relative flex w-full cursor-default items-center gap-2 select-none",
-        className,
+        className
       )}
       {...props}
     >
@@ -260,7 +260,7 @@ function ComboboxChips({
     <div
       className={cn(
         "flex min-h-8 flex-wrap items-center gap-1 rounded-lg border px-2.5 py-1",
-        className,
+        className
       )}
       {...props}
     >
@@ -279,7 +279,7 @@ function ComboboxChip({
     <div
       className={cn(
         "bg-muted text-foreground flex h-5 items-center gap-1 rounded-sm px-1.5 text-xs font-medium",
-        className,
+        className
       )}
       {...props}
     >

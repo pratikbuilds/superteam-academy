@@ -10,34 +10,34 @@ const program = anchor.workspace.onchainAcademy as Program<OnchainAcademy>;
 // Default: mock track collection from devnet deployment
 const courseId = process.argv[2] || "solana-mock-test";
 const learner = new PublicKey(
-  process.argv[3] || provider.wallet.publicKey.toBase58(),
+  process.argv[3] || provider.wallet.publicKey.toBase58()
 );
 const trackCollection = new PublicKey(
-  process.argv[4] || "HgbTmCi4wUWAWLx4LD6zJ2AQdayaCe7mVfhJpGwXfeVX",
+  process.argv[4] || "HgbTmCi4wUWAWLx4LD6zJ2AQdayaCe7mVfhJpGwXfeVX"
 );
 
 const MPL_CORE_PROGRAM_ID = new PublicKey(
-  "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d",
+  "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
 );
 
 const [configPda] = PublicKey.findProgramAddressSync(
   [Buffer.from("config")],
-  program.programId,
+  program.programId
 );
 const [coursePda] = PublicKey.findProgramAddressSync(
   [Buffer.from("course"), Buffer.from(courseId)],
-  program.programId,
+  program.programId
 );
 const [enrollmentPda] = PublicKey.findProgramAddressSync(
   [Buffer.from("enrollment"), Buffer.from(courseId), learner.toBuffer()],
-  program.programId,
+  program.programId
 );
 
 async function main() {
   const credentialAsset = Keypair.generate();
 
   console.log(
-    `Issuing credential for ${learner.toBase58()} in course "${courseId}"...`,
+    `Issuing credential for ${learner.toBase58()} in course "${courseId}"...`
   );
 
   const tx = await program.methods
@@ -45,7 +45,7 @@ async function main() {
       "Superteam Academy Credential",
       "https://arweave.net/credential-metadata",
       1, // coursesCompleted
-      new BN(500), // totalXp
+      new BN(500) // totalXp
     )
     .accountsPartial({
       config: configPda,

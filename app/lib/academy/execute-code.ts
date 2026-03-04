@@ -14,7 +14,7 @@ const executeCodeResponseSchema = z.object({
       passed: z.boolean(),
       timedOut: z.boolean(),
       exitCode: z.number().nullable(),
-    }),
+    })
   ),
 });
 
@@ -49,7 +49,7 @@ export async function executeCodeWithBackend(input: {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(input),
-    },
+    }
   );
   const payload = (await response.json()) as unknown;
 
@@ -57,9 +57,9 @@ export async function executeCodeWithBackend(input: {
     const parsedError = executeCodeErrorSchema.safeParse(payload);
     throw new ExecuteCodeError(
       parsedError.success
-        ? (parsedError.data.error ?? "EXECUTE_CODE_FAILED")
+        ? parsedError.data.error ?? "EXECUTE_CODE_FAILED"
         : "EXECUTE_CODE_FAILED",
-      response.status,
+      response.status
     );
   }
 

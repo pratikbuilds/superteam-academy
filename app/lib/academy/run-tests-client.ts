@@ -20,14 +20,14 @@ export type RunTestsResult = {
  */
 export function runClientTests(
   code: string,
-  testCases: TestCase[],
+  testCases: TestCase[]
 ): RunTestsResult {
   const results: ClientTestResult[] = [];
   const base = { timedOut: false, exitCode: null };
 
   try {
     const fnMatch = code.match(
-      /(?:export\s+)?(?:async\s+)?function\s+(\w+)\s*\([^)]*\)\s*(?::\s*[\w<>,\s\[\]]+)?\s*\{/,
+      /(?:export\s+)?(?:async\s+)?function\s+(\w+)\s*\([^)]*\)\s*(?::\s*[\w<>,\s\[\]]+)?\s*\{/
     );
     const fnName = fnMatch?.[1] ?? "solution";
 

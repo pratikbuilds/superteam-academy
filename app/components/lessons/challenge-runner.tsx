@@ -21,7 +21,7 @@ type Props = {
 
 function runTypeScriptTests(
   code: string,
-  testCases: TestCase[],
+  testCases: TestCase[]
 ): { results: TestResult[]; output: string; error: string | null } {
   const results: TestResult[] = [];
   let output = "";
@@ -29,7 +29,7 @@ function runTypeScriptTests(
 
   try {
     const fnMatch = code.match(
-      /(?:export\s+)?(?:async\s+)?function\s+(\w+)\s*\([^)]*\)\s*(?::\s*[\w<>,\s\[\]]+)?\s*\{/,
+      /(?:export\s+)?(?:async\s+)?function\s+(\w+)\s*\([^)]*\)\s*(?::\s*[\w<>,\s\[\]]+)?\s*\{/
     );
     const fnName = fnMatch?.[1] ?? "solution";
 

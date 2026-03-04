@@ -34,7 +34,7 @@ export function LearningPathsSection({ title }: { title: string }) {
                 className={cn(
                   "group block rounded-lg border-2 border-border bg-card p-4 text-left transition-all duration-200",
                   "hover:border-primary hover:bg-primary/10 hover:ring-2 hover:ring-primary hover:ring-offset-2 hover:ring-offset-background",
-                  "focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  "focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 )}
               >
                 <div

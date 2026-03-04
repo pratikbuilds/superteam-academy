@@ -12,13 +12,13 @@ const program = getProgram();
 
 const [configPda] = PublicKey.findProgramAddressSync(
   [Buffer.from("config")],
-  program.programId,
+  program.programId
 );
 
 const COURSE_ID = "anchor-fundamentals";
 const [coursePda] = PublicKey.findProgramAddressSync(
   [Buffer.from("course"), Buffer.from(COURSE_ID)],
-  program.programId,
+  program.programId
 );
 
 const contentTxId = Buffer.alloc(32);

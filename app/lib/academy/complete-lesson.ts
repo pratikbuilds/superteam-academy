@@ -57,17 +57,15 @@ async function postJson(path: string, body: unknown): Promise<unknown> {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
-    },
+    }
   );
   const payload = (await response.json()) as unknown;
 
   if (!response.ok) {
     const parsedError = apiErrorSchema.safeParse(payload);
     throw new AcademyApiError(
-      parsedError.success
-        ? (parsedError.data.error ?? "API_ERROR")
-        : "API_ERROR",
-      response.status,
+      parsedError.success ? parsedError.data.error ?? "API_ERROR" : "API_ERROR",
+      response.status
     );
   }
 
@@ -84,7 +82,7 @@ export async function completeLessonWithWalletAuth(input: {
     throw new AcademyApiError(
       "SIGN_MESSAGE_UNSUPPORTED",
       400,
-      "Connected wallet does not support message signing.",
+      "Connected wallet does not support message signing."
     );
   }
 
@@ -111,17 +109,17 @@ export async function completeLessonWithWalletAuth(input: {
       throw new AcademyApiError(
         "SIGNATURE_REJECTED",
         400,
-        "Signature was denied. Please try again or use another wallet.",
+        "Signature was denied. Please try again or use another wallet."
       );
     }
     throw new AcademyApiError(
       "SIGN_MESSAGE_FAILED",
       400,
-      msg || "Failed to sign message.",
+      msg || "Failed to sign message."
     );
   }
   const walletPublicKey = Array.from(
-    getAddressEncoder().encode(address(input.wallet)),
+    getAddressEncoder().encode(address(input.wallet))
   );
 
   const completePayload = await postJson("/complete-lesson", {

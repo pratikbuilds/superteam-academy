@@ -63,7 +63,7 @@ export type LessonCompletionState = {
 
 export function useLessonCompletion(
   courseId: string,
-  totalLessons?: number,
+  totalLessons?: number
 ): LessonCompletionState {
   const { isConnected } = useWallet();
   const { address } = useAccount();
@@ -82,20 +82,20 @@ export function useLessonCompletion(
   useEffect(() => {
     const onChainSet = new Set(onChainCompletedLessons);
     setOptimisticCompleted((previous) =>
-      previous.filter((lessonIndex) => !onChainSet.has(lessonIndex)),
+      previous.filter((lessonIndex) => !onChainSet.has(lessonIndex))
     );
   }, [onChainCompletedLessons]);
 
   const completedLessons = useMemo(
     () =>
       [...new Set([...onChainCompletedLessons, ...optimisticCompleted])].sort(
-        (a, b) => a - b,
+        (a, b) => a - b
       ),
-    [onChainCompletedLessons, optimisticCompleted],
+    [onChainCompletedLessons, optimisticCompleted]
   );
   const completedSet = useMemo(
     () => new Set(completedLessons),
-    [completedLessons],
+    [completedLessons]
   );
 
   const markComplete = useCallback(
@@ -113,7 +113,7 @@ export function useLessonCompletion(
           throw new AcademyApiError(
             "INVALID_WALLET_BINDING",
             401,
-            "Connect your wallet to complete lessons on-chain.",
+            "Connect your wallet to complete lessons on-chain."
           );
         }
         if (!enrolled) {
@@ -123,7 +123,7 @@ export function useLessonCompletion(
           throw new AcademyApiError(
             "SIGN_MESSAGE_UNSUPPORTED",
             400,
-            "Wallet is connected but cannot sign messages yet.",
+            "Wallet is connected but cannot sign messages yet."
           );
         }
 
@@ -135,12 +135,15 @@ export function useLessonCompletion(
         });
 
         toast.success("Lesson completed on-chain", {
-          description: `${result.signature.slice(0, 8)}...${result.signature.slice(-8)}`,
+          description: `${result.signature.slice(
+            0,
+            8
+          )}...${result.signature.slice(-8)}`,
         });
         await refetch();
       } catch (markError) {
         setOptimisticCompleted((previous) =>
-          previous.filter((value) => value !== lessonIndex),
+          previous.filter((value) => value !== lessonIndex)
         );
         const message = mapCompletionError(markError);
         setError(message);
@@ -159,12 +162,12 @@ export function useLessonCompletion(
       isMarkingComplete,
       refetch,
       signer,
-    ],
+    ]
   );
 
   const isComplete = useCallback(
     (lessonIndex: number) => completedSet.has(lessonIndex),
-    [completedSet],
+    [completedSet]
   );
 
   return {

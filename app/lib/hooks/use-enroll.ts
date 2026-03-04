@@ -53,7 +53,9 @@ export function useEnroll() {
             ? `https://explorer.solana.com/tx/${signature}`
             : `https://explorer.solana.com/tx/${signature}?cluster=${cluster}`;
         toast.success("Enrolled successfully", {
-          description: `Transaction: ${signature.slice(0, 8)}…${signature.slice(-8)}`,
+          description: `Transaction: ${signature.slice(0, 8)}…${signature.slice(
+            -8
+          )}`,
           action: {
             label: "View transaction",
             onClick: () => window.open(explorerUrl, "_blank"),
@@ -68,7 +70,7 @@ export function useEnroll() {
         setIsEnrolling(false);
       }
     },
-    [client, clientReady, ready, signer],
+    [client, clientReady, ready, signer]
   );
 
   return {

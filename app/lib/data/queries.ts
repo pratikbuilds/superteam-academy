@@ -18,7 +18,7 @@ export type LessonWithContext = {
 
 function getLessonAtFlatIndex(
   course: Course,
-  index: number,
+  index: number
 ): { id: string; title: string; type: Lesson["type"] } | null {
   let flatIndex = 0;
   for (const mod of course.modules) {
@@ -34,7 +34,7 @@ function getLessonAtFlatIndex(
 
 export function getLessonBySlugFromCourse(
   course: Course,
-  lessonSlug: string,
+  lessonSlug: string
 ): LessonWithContext | null {
   let flatIndex = 0;
   for (let mi = 0; mi < course.modules.length; mi++) {
@@ -73,7 +73,7 @@ export async function getActiveCourses(): Promise<Course[]> {
 }
 
 export const getCourseBySlug = cache(async function getCourseBySlug(
-  slug: string,
+  slug: string
 ): Promise<Course | undefined> {
   const course = await fetchCourseBySlugFromSanity(slug);
   return course ?? undefined;
@@ -86,7 +86,7 @@ export async function getCoursesByTrack(trackId: string): Promise<Course[]> {
 export const getLessonBySlug = cache(async function getLessonBySlug(
   courseSlug: string,
   lessonSlug: string,
-  courseOverride?: Course,
+  courseOverride?: Course
 ): Promise<LessonWithContext | null> {
   const course = courseOverride ?? (await getCourseBySlug(courseSlug));
   if (!course) return null;

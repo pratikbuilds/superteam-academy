@@ -48,7 +48,7 @@ export function LessonModuleOverview({
                       "flex items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors",
                       isCurrent && "bg-primary/10 font-medium text-primary",
                       !isCurrent && "hover:bg-muted/50",
-                      completed && !isCurrent && "text-muted-foreground",
+                      completed && !isCurrent && "text-muted-foreground"
                     )}
                   >
                     {completed ? (

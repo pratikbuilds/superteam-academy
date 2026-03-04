@@ -15,20 +15,20 @@ const program = anchor.workspace.onchainAcademy as Program<OnchainAcademy>;
 
 const courseId = process.argv[2] || "solana-mock-test";
 const learner = new PublicKey(
-  process.argv[3] || provider.wallet.publicKey.toBase58(),
+  process.argv[3] || provider.wallet.publicKey.toBase58()
 );
 
 const [configPda] = PublicKey.findProgramAddressSync(
   [Buffer.from("config")],
-  program.programId,
+  program.programId
 );
 const [coursePda] = PublicKey.findProgramAddressSync(
   [Buffer.from("course"), Buffer.from(courseId)],
-  program.programId,
+  program.programId
 );
 const [enrollmentPda] = PublicKey.findProgramAddressSync(
   [Buffer.from("enrollment"), Buffer.from(courseId), learner.toBuffer()],
-  program.programId,
+  program.programId
 );
 
 async function main() {
@@ -39,13 +39,13 @@ async function main() {
     config.xpMint,
     learner,
     false,
-    TOKEN_2022_PROGRAM_ID,
+    TOKEN_2022_PROGRAM_ID
   );
   const creatorAta = getAssociatedTokenAddressSync(
     config.xpMint,
     course.creator,
     false,
-    TOKEN_2022_PROGRAM_ID,
+    TOKEN_2022_PROGRAM_ID
   );
 
   // Create creator ATA if it doesn't exist
@@ -54,7 +54,7 @@ async function main() {
       provider.connection,
       creatorAta,
       undefined,
-      TOKEN_2022_PROGRAM_ID,
+      TOKEN_2022_PROGRAM_ID
     );
   } catch {
     console.log("Creating XP token account for creator...");
@@ -63,7 +63,7 @@ async function main() {
       creatorAta,
       course.creator,
       config.xpMint,
-      TOKEN_2022_PROGRAM_ID,
+      TOKEN_2022_PROGRAM_ID
     );
     const tx = new anchor.web3.Transaction().add(ix);
     await provider.sendAndConfirm(tx);

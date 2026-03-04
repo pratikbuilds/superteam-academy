@@ -108,7 +108,7 @@ function mapModule(mod: SanityModule): Module {
 }
 
 export function mapSanityCourseToCourse(
-  doc: SanityCourse | null,
+  doc: SanityCourse | null
 ): Course | null {
   if (!doc) return null;
   const onChainCourseId = doc.slug?.trim();
@@ -118,7 +118,7 @@ export function mapSanityCourseToCourse(
   const totalLessons = modules.reduce((sum, m) => sum + m.lessons.length, 0);
   const totalDuration = modules.reduce(
     (sum, m) => sum + m.lessons.reduce((s, l) => s + l.duration, 0),
-    0,
+    0
   );
 
   const thumbnail = urlFor(doc.thumbnail) || "";

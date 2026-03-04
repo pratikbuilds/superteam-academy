@@ -21,7 +21,7 @@ export function HeaderNav({ href, label }: HeaderNavProps) {
         "after:absolute after:bottom-0 after:left-2 after:right-2 after:h-[3px] after:transition-colors after:duration-200",
         isActive
           ? "font-semibold text-foreground bg-primary/10 after:bg-primary"
-          : "font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 after:bg-transparent hover:after:bg-primary/50",
+          : "font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 after:bg-transparent hover:after:bg-primary/50"
       )}
     >
       {label}

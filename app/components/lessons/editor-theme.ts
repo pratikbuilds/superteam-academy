@@ -66,7 +66,7 @@ const editorTheme = EditorView.theme(
       outline: "1px solid rgb(18 168 91 / 40%)",
     },
   },
-  { dark: true },
+  { dark: true }
 );
 
 const highlightStyle = HighlightStyle.define([
