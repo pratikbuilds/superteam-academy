@@ -24,7 +24,10 @@ export function ThemeToggle() {
       <button
         type="button"
         aria-label={t("label")}
-        className={cn(buttonVariants({ variant: "outline", size: "icon" }), "cursor-pointer")}
+        className={cn(
+          buttonVariants({ variant: "outline", size: "icon" }),
+          "cursor-pointer",
+        )}
       >
         <SunIcon className="size-4" size={16} />
       </button>
@@ -36,7 +39,10 @@ export function ThemeToggle() {
       type="button"
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label={t("label")}
-      className={cn(buttonVariants({ variant: "outline", size: "icon" }), "cursor-pointer")}
+      className={cn(
+        buttonVariants({ variant: "outline", size: "icon" }),
+        "cursor-pointer",
+      )}
     >
       {isDark ? (
         <SunIcon className="size-4" size={16} />

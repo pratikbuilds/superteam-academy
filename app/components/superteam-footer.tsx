@@ -1,79 +1,114 @@
-"use client";
+import Image from "next/image";
+import { Link } from "@/i18n/navigation";
 
-import React from "react";
+const footerColumns = [
+  {
+    title: "Academy",
+    links: [
+      { label: "Courses", href: "/courses" },
+      { label: "Leaderboard", href: "/leaderboard" },
+      { label: "Verification flow", href: "/#verification-flow" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { label: "Build track", href: "/courses" },
+      { label: "Top builders", href: "/leaderboard" },
+      { label: "Wallet credentials", href: "/#verification-flow" },
+    ],
+  },
+  {
+    title: "Community",
+    links: [
+      { label: "Superteam Brasil", href: "https://x.com/superteambr" },
+      { label: "Solana", href: "https://solana.com" },
+    ],
+  },
+] as const;
 
 export function SuperteamFooter() {
-  const layers = 10;
-  const offset = 4; // px
-
   return (
-    <section className="relative w-full overflow-hidden bg-black flex items-end justify-center mt-auto h-[140px] md:h-[180px] lg:h-[220px]">
-      <div className="relative w-full flex items-end translate-y-[35%]">
-        <svg
-          className="w-full h-auto font-sans font-black tracking-tighter"
-          viewBox="0 0 1400 240"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <linearGradient
-              id="superteam-glow"
-              x1="0%"
-              y1="0%"
-              x2="100%"
-              y2="0%"
-            >
-              <stop offset="0%" stopColor="#ffd23f" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#ffb000" stopOpacity="0.8" />
-            </linearGradient>
-            <linearGradient
-              id="superteam-glow-faint"
-              x1="0%"
-              y1="0%"
-              x2="100%"
-              y2="0%"
-            >
-              <stop offset="0%" stopColor="#ffd23f" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#ffb000" stopOpacity="0.4" />
-            </linearGradient>
-          </defs>
+    <footer className="relative mt-auto border-t border-border/70 bg-muted/35 text-foreground dark:bg-[#121d16] dark:text-[#f7eacb]">
+      <div className="pointer-events-none absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_12%_20%,color-mix(in_srgb,var(--primary)_18%,transparent)_0%,transparent_46%)]" />
+      <div className="pointer-events-none absolute inset-0 opacity-22 [background-image:linear-gradient(to_right,color-mix(in_srgb,var(--border)_72%,transparent)_1px,transparent_1px),linear-gradient(to_bottom,color-mix(in_srgb,var(--border)_72%,transparent)_1px,transparent_1px)] [background-size:28px_28px]" />
 
-          {/* Background layers */}
-          {[...Array(layers)].map((_, i) => (
-            <text
-              key={i}
-              x="50%"
-              y="90%"
-              textAnchor="middle"
-              className="stroke-[url(#superteam-glow-faint)]"
-              style={{
-                fontSize: "200px",
-                fill: "transparent",
-                strokeWidth: 1,
-                // Move layers UP and LEFT to match the wireframe isometric trail
-                transform: `translate(-${(layers - i) * offset}px, -${(layers - i) * offset}px)`,
-              }}
+      <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="grid gap-9 lg:grid-cols-[1.45fr_1fr_1fr_1fr]">
+          <div className="max-w-sm">
+            <Link
+              href="/"
+              className="inline-flex"
+              aria-label="Superteam Brasil"
             >
-              SUPERTEAM
-            </text>
+              <Image
+                src="/logo-green.svg"
+                alt="Superteam Brasil"
+                width={204}
+                height={36}
+                className="h-8 w-auto dark:hidden"
+              />
+              <Image
+                src="/logo-white.svg"
+                alt="Superteam Brasil"
+                width={204}
+                height={36}
+                className="hidden h-8 w-auto dark:block"
+              />
+            </Link>
+
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground dark:text-[#f7eacb]/72">
+              Serious Solana learning with on-chain proof, challenge-driven
+              curriculum, and wallet-native outcomes.
+            </p>
+          </div>
+
+          {footerColumns.map((column) => (
+            <div key={column.title}>
+              <p className="text-xs font-semibold tracking-[0.16em] text-muted-foreground uppercase dark:text-[#f7eacb]/64">
+                {column.title}
+              </p>
+              <ul className="mt-3 space-y-2.5">
+                {column.links.map((item) => {
+                  const isExternal = item.href.startsWith("http");
+
+                  if (isExternal) {
+                    return (
+                      <li key={item.label}>
+                        <a
+                          href={item.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-sm text-foreground/84 transition-colors hover:text-primary dark:text-[#f7eacb]/82 dark:hover:text-[#fbd800]"
+                        >
+                          {item.label}
+                        </a>
+                      </li>
+                    );
+                  }
+
+                  return (
+                    <li key={item.label}>
+                      <Link
+                        href={item.href}
+                        className="text-sm text-foreground/84 transition-colors hover:text-primary dark:text-[#f7eacb]/82 dark:hover:text-[#fbd800]"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           ))}
+        </div>
 
-          {/* The top layer */}
-          <text
-            x="50%"
-            y="90%"
-            textAnchor="middle"
-            className="stroke-[url(#superteam-glow)]"
-            style={{
-              fontSize: "200px",
-              fill: "transparent",
-              strokeWidth: 1.5,
-              transform: `translate(0px, 0px)`,
-            }}
-          >
-            SUPERTEAM
-          </text>
-        </svg>
+        <div className="mt-8 border-t border-border/70 pt-4 text-xs text-muted-foreground dark:text-[#f7eacb]/62">
+          © {new Date().getFullYear()} Superteam Brasil Academy
+        </div>
       </div>
-    </section>
+
+      {/* SVG footer pattern intentionally disabled per latest design feedback. */}
+    </footer>
   );
 }

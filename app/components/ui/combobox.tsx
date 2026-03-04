@@ -2,7 +2,11 @@
 
 import * as React from "react";
 import { CaretDownIcon } from "@phosphor-icons/react";
-import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+} from "@/components/ui/popover";
 import {
   Command,
   CommandEmpty,
@@ -23,9 +27,8 @@ type ComboboxContextValue<T> = {
   setValue: (value: T | null) => void;
 };
 
-const ComboboxContext = React.createContext<
-  ComboboxContextValue<unknown> | null
->(null);
+const ComboboxContext =
+  React.createContext<ComboboxContextValue<unknown> | null>(null);
 
 function useComboboxContext<T>() {
   const ctx = React.useContext(ComboboxContext);
@@ -53,7 +56,7 @@ function Combobox<T>({
       value,
       setValue,
     }),
-    [items, itemToStringValue, open, value]
+    [items, itemToStringValue, open, value],
   );
   return (
     <ComboboxContext.Provider value={ctx as ComboboxContextValue<unknown>}>
@@ -78,8 +81,7 @@ function ComboboxInput({
   showTrigger?: boolean;
   showClear?: boolean;
 }) {
-  const { value, itemToStringValue, setOpen } =
-    useComboboxContext<unknown>();
+  const { value, itemToStringValue, setOpen } = useComboboxContext<unknown>();
   const [search, setSearch] = React.useState("");
 
   React.useEffect(() => {
@@ -178,7 +180,7 @@ function ComboboxItem({
     <span
       className={cn(
         "relative flex w-full cursor-default items-center gap-2 select-none",
-        className
+        className,
       )}
       {...props}
     >
@@ -194,10 +196,7 @@ function ComboboxGroup({
   return <CommandGroup className={className} {...props} />;
 }
 
-function ComboboxLabel({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function ComboboxLabel({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn("text-muted-foreground px-2 py-1.5 text-xs", className)}
@@ -261,7 +260,7 @@ function ComboboxChips({
     <div
       className={cn(
         "flex min-h-8 flex-wrap items-center gap-1 rounded-lg border px-2.5 py-1",
-        className
+        className,
       )}
       {...props}
     >
@@ -280,7 +279,7 @@ function ComboboxChip({
     <div
       className={cn(
         "bg-muted text-foreground flex h-5 items-center gap-1 rounded-sm px-1.5 text-xs font-medium",
-        className
+        className,
       )}
       {...props}
     >
@@ -295,10 +294,7 @@ function ComboboxChipsInput({
 }: React.ComponentProps<"input">) {
   return (
     <input
-      className={cn(
-        "min-w-16 flex-1 outline-none bg-transparent",
-        className
-      )}
+      className={cn("min-w-16 flex-1 outline-none bg-transparent", className)}
       {...props}
     />
   );
