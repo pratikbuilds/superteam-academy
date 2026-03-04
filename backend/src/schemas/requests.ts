@@ -56,7 +56,7 @@ export const executeCodeRequestSchema = z.object({
         input: z.string().max(20_000),
         expectedOutput: z.string().max(20_000),
         label: z.string().min(1).max(200),
-      }),
+      })
     )
     .min(1)
     .max(30),

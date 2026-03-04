@@ -15,7 +15,7 @@ export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
   const configPda = await getConfigPda(programAddress);
   const maybe = await fetchMaybeConfig(
     rpc as Parameters<typeof fetchMaybeConfig>[0],
-    configPda,
+    configPda
   );
   if (!maybe.exists) {
     throw new Error("Config not found");
@@ -31,7 +31,7 @@ export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
   const tokenAccountAddresses = accounts.map((a) => address(a.address));
   const encodedAccounts = await fetchEncodedAccounts(
     rpc,
-    tokenAccountAddresses,
+    tokenAccountAddresses
   );
 
   const results = encodedAccounts.map((encoded, i) => {

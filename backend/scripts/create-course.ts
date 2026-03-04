@@ -104,7 +104,7 @@ function parseContentTxId(input?: string): Uint8Array {
   }
 
   throw new Error(
-    "contentTxId must be 32 bytes (64-char hex, base64, or base64url)",
+    "contentTxId must be 32 bytes (64-char hex, base64, or base64url)"
   );
 }
 
@@ -116,7 +116,7 @@ function parseBase64SecretKey(input: string): Uint8Array {
     if (
       Array.isArray(parsed) &&
       parsed.every(
-        (value) => Number.isInteger(value) && value >= 0 && value <= 255,
+        (value) => Number.isInteger(value) && value >= 0 && value <= 255
       )
     ) {
       return Uint8Array.from(parsed);
@@ -134,7 +134,7 @@ async function loadAuthoritySigner(authorityKeypairBase64: string) {
     return createKeyPairSignerFromPrivateKeyBytes(authorityBytes);
   }
   throw new Error(
-    "AUTHORITY_KEYPAIR must decode to 64-byte keypair bytes or 32-byte private key bytes",
+    "AUTHORITY_KEYPAIR must decode to 64-byte keypair bytes or 32-byte private key bytes"
   );
 }
 
@@ -198,7 +198,7 @@ async function main() {
   const lessonCount = parseUintInRange(
     values.lessonCount ?? "5",
     "lessonCount",
-    U8_MAX,
+    U8_MAX
   );
   if (lessonCount < 1) {
     throw new Error("lessonCount must be at least 1");
@@ -207,7 +207,7 @@ async function main() {
   const difficulty = parseUintInRange(
     values.difficulty ?? "2",
     "difficulty",
-    U8_MAX,
+    U8_MAX
   );
   if (difficulty < 1 || difficulty > 3) {
     throw new Error("difficulty must be 1, 2, or 3");
@@ -216,23 +216,23 @@ async function main() {
   const xpPerLesson = parseUintInRange(
     values.xpPerLesson ?? "100",
     "xpPerLesson",
-    U32_MAX,
+    U32_MAX
   );
   const trackId = parseUintInRange(values.trackId ?? "1", "trackId", U16_MAX);
   const trackLevel = parseUintInRange(
     values.trackLevel ?? "1",
     "trackLevel",
-    U8_MAX,
+    U8_MAX
   );
   const creatorRewardXp = parseUintInRange(
     values.creatorRewardXp ?? "50",
     "creatorRewardXp",
-    U32_MAX,
+    U32_MAX
   );
   const minCompletionsForReward = parseUintInRange(
     values.minCompletionsForReward ?? "10",
     "minCompletionsForReward",
-    U16_MAX,
+    U16_MAX
   );
   const prerequisite = values.prerequisite
     ? address(values.prerequisite)
@@ -249,7 +249,7 @@ async function main() {
 
   const rpc = createSolanaRpc(env.RPC_URL) as RpcLike;
   const rpcSubscriptions = createSolanaRpcSubscriptions(
-    env.RPC_WS_URL ?? deriveRpcWsUrl(env.RPC_URL),
+    env.RPC_WS_URL ?? deriveRpcWsUrl(env.RPC_URL)
   ) as RpcSubscriptionsLike;
 
   const instruction = await getCreateCourseInstructionAsync(
@@ -270,7 +270,7 @@ async function main() {
     },
     {
       programAddress,
-    },
+    }
   );
 
   const { value: latestBlockhash } = await rpc.getLatestBlockhash().send();
@@ -279,11 +279,12 @@ async function main() {
     (message) => setTransactionMessageFeePayerSigner(authoritySigner, message),
     (message) =>
       setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, message),
-    (message) => appendTransactionMessageInstruction(instruction, message),
+    (message) => appendTransactionMessageInstruction(instruction, message)
   );
 
-  const signedTransaction =
-    await signTransactionMessageWithSigners(transactionMessage);
+  const signedTransaction = await signTransactionMessageWithSigners(
+    transactionMessage
+  );
   const sendAndConfirmTransaction = sendAndConfirmTransactionFactory({
     rpc,
     rpcSubscriptions,
@@ -291,7 +292,7 @@ async function main() {
 
   await sendAndConfirmTransaction(
     signedTransaction as Parameters<typeof sendAndConfirmTransaction>[0],
-    { commitment: "confirmed" },
+    { commitment: "confirmed" }
   );
 
   console.log("Course created");

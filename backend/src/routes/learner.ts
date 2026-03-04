@@ -68,7 +68,7 @@ export function createLearnerRoutes(overrides?: {
         c,
         error,
         "UNEXPECTED_COMPLETE_LESSON_ERROR",
-        500,
+        500
       );
     }
   });
@@ -92,6 +92,10 @@ export function createLearnerRoutes(overrides?: {
       if (request.learner && request.learner !== session.wallet) {
         throw new AuthError("INVALID_WALLET_BINDING", 401);
       }
+      console.log("[finalize-course] request", {
+        courseId: request.courseId,
+        learner: session.wallet,
+      });
       const result = await finalizeCourseOnChain({
         courseId: request.courseId,
         learner: address(session.wallet),
@@ -106,7 +110,7 @@ export function createLearnerRoutes(overrides?: {
             c,
             new Error("Invalid track"),
             "UNEXPECTED_FINALIZE_COURSE_ERROR",
-            500,
+            500
           );
         await db.insert(completedEnrollments).values({
           wallet: session.wallet,
@@ -118,17 +122,25 @@ export function createLearnerRoutes(overrides?: {
         });
       }
 
+      console.log("[finalize-course] success", {
+        signature: result.signature,
+        learner: session.wallet,
+      });
       return c.json({
         ok: true,
         signature: result.signature,
         learner: session.wallet,
       });
     } catch (error) {
+      console.error("[finalize-course] error", {
+        courseId: parsed.data?.courseId,
+        error: error instanceof Error ? error.message : String(error),
+      });
       return handleRouteError(
         c,
         error,
         "UNEXPECTED_FINALIZE_COURSE_ERROR",
-        500,
+        500
       );
     }
   });
@@ -152,6 +164,11 @@ export function createLearnerRoutes(overrides?: {
       if (request.learner && request.learner !== session.wallet) {
         throw new AuthError("INVALID_WALLET_BINDING", 401);
       }
+      console.log("[issue-credential] request", {
+        courseId: request.courseId,
+        learner: session.wallet,
+        trackCollection: request.trackCollection,
+      });
       let trackCollectionAddress: ReturnType<typeof address>;
       try {
         trackCollectionAddress = address(request.trackCollection);
@@ -174,10 +191,15 @@ export function createLearnerRoutes(overrides?: {
         .where(
           and(
             eq(completedEnrollments.wallet, session.wallet),
-            eq(completedEnrollments.courseId, request.courseId),
-          ),
+            eq(completedEnrollments.courseId, request.courseId)
+          )
         );
 
+      console.log("[issue-credential] success", {
+        signature: result.signature,
+        credentialAsset: String(result.credentialAsset),
+        learner: session.wallet,
+      });
       return c.json({
         ok: true,
         signature: result.signature,
@@ -185,11 +207,17 @@ export function createLearnerRoutes(overrides?: {
         credentialAsset: result.credentialAsset,
       });
     } catch (error) {
+      console.error("[issue-credential] error", {
+        courseId: parsed.data?.courseId,
+        message: error instanceof Error ? error.message : String(error),
+        cause:
+          error instanceof Error ? (error.cause as Error)?.message : undefined,
+      });
       return handleRouteError(
         c,
         error,
         "UNEXPECTED_ISSUE_CREDENTIAL_ERROR",
-        500,
+        500
       );
     }
   });
@@ -242,7 +270,7 @@ export function createLearnerRoutes(overrides?: {
         c,
         error,
         "UNEXPECTED_UPGRADE_CREDENTIAL_ERROR",
-        500,
+        500
       );
     }
   });

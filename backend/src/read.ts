@@ -1,4 +1,5 @@
 import { address, createSolanaRpc } from "@solana/kit";
+import { eq } from "drizzle-orm";
 import {
   ACHIEVEMENT_TYPE_DISCRIMINATOR,
   fetchAllCoursesByProgram,
@@ -13,6 +14,8 @@ import {
   getEnrollmentPda,
   getXpAta,
 } from "@superteam/academy-sdk";
+import { db } from "./db";
+import { completedEnrollments } from "./db/schema";
 import { env } from "./env";
 
 const programAddress = address(env.PROGRAM_ID);
@@ -30,7 +33,7 @@ export async function readConfig(): Promise<{
   const configPda = await getConfigPda(programAddress);
   const maybe = await fetchMaybeConfig(
     rpc as Parameters<typeof fetchMaybeConfig>[0],
-    configPda,
+    configPda
   );
   if (!maybe.exists) {
     throw new Error("CONFIG_NOT_INITIALIZED");
@@ -56,14 +59,13 @@ export async function readCourses(activeOnly = true): Promise<
   const rpc = getRpc();
   const maybeCourses = await fetchAllCoursesByProgram(
     rpc as unknown as Parameters<typeof fetchAllCoursesByProgram>[0],
-    programAddress,
+    programAddress
   );
   return maybeCourses
     .filter((m) => m.exists)
     .map((m) => m.data)
     .filter((c) => !activeOnly || c.isActive)
     .map((c) => ({
-      ...c,
       courseId: c.courseId,
       lessonCount: c.lessonCount,
       xpPerLesson: c.xpPerLesson,
@@ -84,14 +86,13 @@ export async function readCourse(courseId: string): Promise<{
   const coursePda = await getCoursePda(courseId, programAddress);
   const maybe = await fetchMaybeCourse(
     rpc as Parameters<typeof fetchMaybeCourse>[0],
-    coursePda,
+    coursePda
   );
   if (!maybe.exists) {
     return null;
   }
   const c = maybe.data;
   return {
-    ...c,
     courseId: c.courseId,
     lessonCount: c.lessonCount,
     xpPerLesson: c.xpPerLesson,
@@ -106,16 +107,30 @@ export async function readEnrollment(courseId: string, learner: string) {
   const enrollmentPda = await getEnrollmentPda(
     courseId,
     learnerAddress,
-    programAddress,
+    programAddress
   );
   const maybe = await fetchMaybeEnrollment(
     rpc as Parameters<typeof fetchMaybeEnrollment>[0],
-    enrollmentPda,
+    enrollmentPda
   );
   if (!maybe.exists) {
     return null;
   }
-  return maybe.data;
+  const d = maybe.data;
+  return {
+    lessonFlags: d.lessonFlags.map((f) => String(f)),
+    completedAt: d.completedAt != null ? String(d.completedAt) : null,
+    credentialAsset:
+      d.credentialAsset != null &&
+      typeof d.credentialAsset === "object" &&
+      "__option" in d.credentialAsset &&
+      (d.credentialAsset as { __option: string }).__option === "Some" &&
+      "value" in d.credentialAsset
+        ? String((d.credentialAsset as { value: unknown }).value)
+        : typeof d.credentialAsset === "string"
+        ? d.credentialAsset
+        : null,
+  };
 }
 
 export async function readXpBalance(learner: string): Promise<{
@@ -126,7 +141,7 @@ export async function readXpBalance(learner: string): Promise<{
   const configPda = await getConfigPda(programAddress);
   const maybeConfig = await fetchMaybeConfig(
     rpc as Parameters<typeof fetchMaybeConfig>[0],
-    configPda,
+    configPda
   );
   if (!maybeConfig.exists) {
     throw new Error("CONFIG_NOT_INITIALIZED");
@@ -155,7 +170,7 @@ export async function readAchievementsForWallet(learner: string): Promise<
   const rpc = getRpc();
   const learnerAddress = address(learner);
   const discriminatorB64 = Buffer.from(ACHIEVEMENT_TYPE_DISCRIMINATOR).toString(
-    "base64",
+    "base64"
   );
   const rpcWithGpa = rpc as unknown as {
     getProgramAccounts: (
@@ -163,7 +178,7 @@ export async function readAchievementsForWallet(learner: string): Promise<
       config?: {
         commitment?: string;
         filters?: Array<{ memcmp: { offset: bigint; bytes: string } }>;
-      },
+      }
     ) => {
       send: () => Promise<{ value: Array<{ pubkey: typeof programAddress }> }>;
     };
@@ -189,7 +204,7 @@ export async function readAchievementsForWallet(learner: string): Promise<
   const addresses = accounts.map((a) => a.pubkey);
   const maybeTypes = await fetchAllMaybeAchievementType(
     rpc as Parameters<typeof fetchAllMaybeAchievementType>[0],
-    addresses,
+    addresses
   );
 
   const results: Array<{
@@ -205,11 +220,11 @@ export async function readAchievementsForWallet(learner: string): Promise<
     const receiptPda = await getAchievementReceiptPda(
       type.achievementId,
       learnerAddress,
-      programAddress,
+      programAddress
     );
     const maybeReceipt = await fetchMaybeAchievementReceipt(
       rpc as Parameters<typeof fetchMaybeAchievementReceipt>[0],
-      receiptPda,
+      receiptPda
     );
     if (maybeReceipt.exists) {
       results.push({
@@ -222,4 +237,32 @@ export async function readAchievementsForWallet(learner: string): Promise<
   }
 
   return results;
+}
+
+export async function readCredentialParams(learner: string): Promise<{
+  trackCollection: string;
+  credentialName: string;
+  metadataUri: string;
+  coursesCompleted: number;
+  totalXp: number;
+} | null> {
+  const trackCollection = env.TRACK_COLLECTION;
+  if (!trackCollection) {
+    return null;
+  }
+  const rows = await db
+    .select()
+    .from(completedEnrollments)
+    .where(eq(completedEnrollments.wallet, learner));
+  const coursesCompleted = rows.length;
+  const xpData = await readXpBalance(learner);
+  return {
+    trackCollection,
+    credentialName: env.CREDENTIAL_NAME ?? "Superteam Academy Credential",
+    metadataUri:
+      env.CREDENTIAL_METADATA_URI ??
+      "https://arweave.net/superteam-academy-credential",
+    coursesCompleted,
+    totalXp: xpData.balance,
+  };
 }

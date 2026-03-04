@@ -7,7 +7,7 @@ export function parseU64OrThrow(value: string | number): bigint {
     throw new ProgramError(
       "TOTAL_XP_UNSAFE_INTEGER",
       400,
-      "totalXp must be a string when above Number.MAX_SAFE_INTEGER",
+      "totalXp must be a string when above Number.MAX_SAFE_INTEGER"
     );
   }
   const asBigInt = typeof value === "number" ? BigInt(value) : BigInt(value);

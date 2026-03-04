@@ -18,7 +18,9 @@ serve(
   },
   (info) => {
     console.log(
-      `Academy backend listening on http://localhost:${info.port} (CORS: ${corsOrigins.join(", ")})`,
+      `Academy backend listening on http://localhost:${
+        info.port
+      } (CORS: ${corsOrigins.join(", ")})`
     );
-  },
+  }
 );

@@ -3,6 +3,7 @@ import {
   readConfig,
   readCourse,
   readCourses,
+  readCredentialParams,
   readEnrollment,
   readXpBalance,
 } from "../read";
@@ -53,7 +54,7 @@ readRoutes.get("/courses/:courseId/enrollment", async (c) => {
   if (!parsed.success) {
     return c.json(
       { error: "MALFORMED_REQUEST", details: "learner required" },
-      400,
+      400
     );
   }
   try {
@@ -68,12 +69,32 @@ readRoutes.get("/courses/:courseId/enrollment", async (c) => {
   }
 });
 
+readRoutes.get("/credential-params", async (c) => {
+  const parsed = learnerQuerySchema.safeParse(c.req.query());
+  if (!parsed.success) {
+    return c.json(
+      { error: "MALFORMED_REQUEST", details: "learner required" },
+      400
+    );
+  }
+  try {
+    const params = await readCredentialParams(parsed.data.learner);
+    if (!params) {
+      return c.json({ error: "CREDENTIAL_PARAMS_NOT_CONFIGURED" }, 503);
+    }
+    return c.json(params);
+  } catch (error) {
+    console.error("Credential params fetch error", error);
+    return c.json({ error: "CREDENTIAL_PARAMS_FETCH_FAILED" }, 500);
+  }
+});
+
 readRoutes.get("/xp-balance", async (c) => {
   const parsed = learnerQuerySchema.safeParse(c.req.query());
   if (!parsed.success) {
     return c.json(
       { error: "MALFORMED_REQUEST", details: "learner required" },
-      400,
+      400
     );
   }
   try {

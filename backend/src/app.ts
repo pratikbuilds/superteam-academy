@@ -18,7 +18,7 @@ export function createApp(
     authUri: string;
     authChainId: string;
   },
-  overrides?: { completeLessonOnChain?: CompleteLessonOnChainOverride },
+  overrides?: { completeLessonOnChain?: CompleteLessonOnChainOverride }
 ): Hono {
   const app = new Hono();
 
@@ -31,7 +31,7 @@ export function createApp(
     "/*",
     cors({
       origin: corsOrigins.length === 1 ? corsOrigins[0] : corsOrigins,
-    }),
+    })
   );
 
   app.route("/", healthRoutes);

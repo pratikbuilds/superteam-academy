@@ -1,0 +1,11 @@
+{
+  "name": "Superteam Academy Credentials",
+  "symbol": "STACRED",
+  "description": "On-chain credentials for Superteam Academy course completions. Soulbound NFT certificates proving track completion and XP earned.",
+  "image": "https://i.ibb.co/N6tSDHNR/credential-nft.png",
+  "external_url": "https://academy.superteam.fun",
+  "attributes": [
+    { "trait_type": "Type", "value": "Credential Collection" },
+    { "trait_type": "Platform", "value": "Superteam Academy" }
+  ]
+}

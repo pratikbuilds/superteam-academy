@@ -34,7 +34,7 @@ async function createChallenge(
   wallet: string,
   action: "complete-lesson" | "finalize-course",
   courseId: string,
-  lessonIndex: number | null,
+  lessonIndex: number | null
 ) {
   const req = new Request("http://local/auth/create-signin-data", {
     method: "POST",
@@ -53,7 +53,7 @@ async function verifyChallenge(
     publicKey: Uint8Array;
     signedMessage: Uint8Array;
     signature: Uint8Array;
-  },
+  }
 ) {
   const req = new Request("http://local/auth/verify", {
     method: "POST",
@@ -87,7 +87,7 @@ async function run() {
 
   const { privateKey, publicKey } = generateKeyPairSync("ed25519");
   const publicKeyBytes = extractRawEd25519PublicKey(
-    publicKey.export({ format: "der", type: "spki" }) as Buffer,
+    publicKey.export({ format: "der", type: "spki" }) as Buffer
   );
   const wallet = encodeBase58(publicKeyBytes);
 
@@ -97,12 +97,14 @@ async function run() {
     wallet,
     "complete-lesson",
     "solana-101",
-    1,
+    1
   );
   assert.equal(
     validChallenge.status,
     200,
-    `Expected challenge creation success: ${JSON.stringify(validChallenge.body)}`,
+    `Expected challenge creation success: ${JSON.stringify(
+      validChallenge.body
+    )}`
   );
   const validMessage = createSignInMessage(validChallenge.body.input);
   const validSignature = sign(null, Buffer.from(validMessage), privateKey);
@@ -115,12 +117,12 @@ async function run() {
   assert.equal(
     validResult.status,
     200,
-    "Expected valid signature to return 200",
+    "Expected valid signature to return 200"
   );
   assert.equal(
     validResult.body.ok,
     true,
-    "Expected ok=true for valid signature",
+    "Expected ok=true for valid signature"
   );
 
   // 2) Wrong signature => 401
@@ -129,7 +131,7 @@ async function run() {
     wallet,
     "complete-lesson",
     "solana-101",
-    2,
+    2
   );
   const wrongMessage = createSignInMessage(wrongChallenge.body.input);
   const wrongSignature = sign(null, Buffer.from(wrongMessage), privateKey);
@@ -143,7 +145,7 @@ async function run() {
   assert.equal(
     wrongResult.status,
     401,
-    "Expected wrong signature to return 401",
+    "Expected wrong signature to return 401"
   );
   assert.equal(wrongResult.body.error, "INVALID_SIGNATURE");
 
@@ -153,7 +155,7 @@ async function run() {
     wallet,
     "finalize-course",
     "solana-101",
-    null,
+    null
   );
   expireNonceForTest(expiredChallenge.body.nonce);
   const expiredMessage = createSignInMessage(expiredChallenge.body.input);
@@ -166,12 +168,12 @@ async function run() {
       publicKey: publicKeyBytes,
       signedMessage: expiredMessage,
       signature: expiredSignature,
-    },
+    }
   );
   assert.equal(
     expiredResult.status,
     401,
-    "Expected expired nonce to return 401",
+    "Expected expired nonce to return 401"
   );
   assert.equal(expiredResult.body.error, "EXPIRED_MESSAGE");
 
@@ -181,7 +183,7 @@ async function run() {
     wallet,
     "complete-lesson",
     "solana-101",
-    3,
+    3
   );
   const replayMessage = createSignInMessage(replayChallenge.body.input);
   const replaySignature = sign(null, Buffer.from(replayMessage), privateKey);
@@ -202,7 +204,7 @@ async function run() {
   assert.equal(
     replaySecond.status,
     409,
-    "Expected replayed nonce to return 409",
+    "Expected replayed nonce to return 409"
   );
   assert.equal(replaySecond.body.error, "REPLAYED_NONCE");
 

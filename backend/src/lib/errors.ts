@@ -6,34 +6,34 @@ export function handleRouteError(
   c: Context,
   error: unknown,
   fallbackCode = "UNEXPECTED_ERROR",
-  fallbackStatus = 500,
+  fallbackStatus = 500
 ): Response {
   if (isAuthError(error)) {
     return c.json(
       { ok: false, error: error.code },
-      error.status as 400 | 401 | 404 | 409 | 500,
+      error.status as 400 | 401 | 404 | 409 | 500
     );
   }
   if (isProgramError(error)) {
     return c.json(
       { ok: false, error: error.code },
-      error.status as 400 | 401 | 404 | 409 | 500,
+      error.status as 400 | 401 | 404 | 409 | 500
     );
   }
   if (isErrorWithCodeAndStatus(error)) {
     return c.json(
       { ok: false, error: error.code },
-      error.status as 400 | 401 | 404 | 409 | 500,
+      error.status as 400 | 401 | 404 | 409 | 500
     );
   }
   return c.json(
     { ok: false, error: fallbackCode },
-    fallbackStatus as 400 | 401 | 404 | 409 | 500,
+    fallbackStatus as 400 | 401 | 404 | 409 | 500
   );
 }
 
 function isErrorWithCodeAndStatus(
-  error: unknown,
+  error: unknown
 ): error is { code: string; status: number } {
   return (
     error instanceof Error &&

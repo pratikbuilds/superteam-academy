@@ -51,10 +51,10 @@ import {
 import { env } from "./env";
 
 const TOKEN_2022_PROGRAM_ADDRESS = address(
-  "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+  "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
 );
 const ASSOCIATED_TOKEN_PROGRAM_ADDRESS = address(
-  "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+  "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
 );
 const SYSTEM_PROGRAM_ADDRESS = address("11111111111111111111111111111111");
 
@@ -104,7 +104,7 @@ export function parseBase64SecretKey(input: string): Uint8Array {
     if (
       Array.isArray(parsed) &&
       parsed.every(
-        (value) => Number.isInteger(value) && value >= 0 && value <= 255,
+        (value) => Number.isInteger(value) && value >= 0 && value <= 255
       )
     ) {
       return Uint8Array.from(parsed);
@@ -114,7 +114,7 @@ export function parseBase64SecretKey(input: string): Uint8Array {
 }
 
 async function loadBackendSigner(
-  secretKeyBase64: string,
+  secretKeyBase64: string
 ): Promise<KeyPairSigner> {
   const secretKeyBytes = parseBase64SecretKey(secretKeyBase64);
   if (secretKeyBytes.length === 64) {
@@ -126,7 +126,7 @@ async function loadBackendSigner(
   throw new ProgramError(
     "INVALID_BACKEND_SIGNER",
     500,
-    "BACKEND_SIGNER_KEYPAIR must decode to 64-byte keypair bytes or 32-byte private key bytes",
+    "BACKEND_SIGNER_KEYPAIR must decode to 64-byte keypair bytes or 32-byte private key bytes"
   );
 }
 
@@ -135,7 +135,7 @@ async function getProgramContext(): Promise<ProgramContext> {
     contextPromise = (async () => {
       const rpc = createSolanaRpc(env.RPC_URL) as RpcLike;
       const rpcSubscriptions = createSolanaRpcSubscriptions(
-        env.RPC_WS_URL ?? deriveRpcWsUrl(env.RPC_URL),
+        env.RPC_WS_URL ?? deriveRpcWsUrl(env.RPC_URL)
       ) as RpcSubscriptionsLike;
       const programAddress = address(env.PROGRAM_ID);
       const backendSigner = await loadBackendSigner(env.BACKEND_SIGNER_KEYPAIR);
@@ -179,7 +179,7 @@ function assertBackendSignerMatchesConfig(input: {
     throw new ProgramError(
       "BACKEND_SIGNER_MISMATCH",
       500,
-      "Config backend signer does not match BACKEND_SIGNER_KEYPAIR",
+      "Config backend signer does not match BACKEND_SIGNER_KEYPAIR"
     );
   }
 }
@@ -189,7 +189,7 @@ async function signAndSendTransaction(params: {
   transactionMessage: Parameters<typeof signTransactionMessageWithSigners>[0];
 }): Promise<string> {
   const signedTransaction = await signTransactionMessageWithSigners(
-    params.transactionMessage,
+    params.transactionMessage
   );
   const sendAndConfirmTransaction = sendAndConfirmTransactionFactory({
     rpc: params.context.rpc,
@@ -198,7 +198,7 @@ async function signAndSendTransaction(params: {
 
   await sendAndConfirmTransaction(
     signedTransaction as Parameters<typeof sendAndConfirmTransaction>[0],
-    { commitment: "confirmed" },
+    { commitment: "confirmed" }
   );
 
   return getSignatureFromTransaction(signedTransaction);
@@ -221,7 +221,7 @@ export async function completeLessonOnChain(input: {
   const enrollmentPda = await getEnrollmentPda(
     input.courseId,
     input.learner,
-    context.programAddress,
+    context.programAddress
   );
 
   const maybeConfig = await fetchMaybeConfig(context.rpc, configPda);
@@ -243,19 +243,19 @@ export async function completeLessonOnChain(input: {
   const course = maybeCourse.data;
   const lessonIndexU8 = Math.max(
     0,
-    Math.min(255, Number(input.lessonIndex) | 0),
+    Math.min(255, Number(input.lessonIndex) | 0)
   ) as number;
   if (lessonIndexU8 >= course.lessonCount) {
     throw new ProgramError(
       "LESSON_OUT_OF_BOUNDS",
       400,
-      `Lesson index ${lessonIndexU8} >= course lesson count ${course.lessonCount}`,
+      `Lesson index ${lessonIndexU8} >= course lesson count ${course.lessonCount}`
     );
   }
 
   const maybeEnrollment = await fetchMaybeEnrollment(
     context.rpc,
-    enrollmentPda,
+    enrollmentPda
   );
   if (!maybeEnrollment.exists) {
     throw new ProgramError("ENROLLMENT_NOT_FOUND", 403);
@@ -282,7 +282,7 @@ export async function completeLessonOnChain(input: {
     },
     {
       programAddress: context.programAddress,
-    },
+    }
   );
 
   const { value: latestBlockhash } = await context.rpc
@@ -294,7 +294,7 @@ export async function completeLessonOnChain(input: {
     (message) =>
       setTransactionMessageFeePayerSigner(context.backendSigner, message),
     (message) =>
-      setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, message),
+      setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, message)
   ) as TxMessage;
 
   if (shouldCreateLearnerAta) {
@@ -305,13 +305,13 @@ export async function completeLessonOnChain(input: {
         mint: config.xpMint,
         ata: learnerTokenAccount,
       }),
-      transactionMessage,
+      transactionMessage
     ) as TxMessage;
   }
 
   transactionMessage = appendTransactionMessageInstruction(
     completeInstruction,
-    transactionMessage,
+    transactionMessage
   ) as TxMessage;
 
   const txMsg = transactionMessage;
@@ -326,26 +326,28 @@ export async function completeLessonOnChain(input: {
       isOnchainAcademyError(
         error,
         txMsg,
-        ONCHAIN_ACADEMY_ERROR__LESSON_ALREADY_COMPLETED,
+        ONCHAIN_ACADEMY_ERROR__LESSON_ALREADY_COMPLETED
       )
     ) {
       throw new ProgramError(
         "LESSON_ALREADY_COMPLETED",
         409,
-        "Lesson already completed",
+        "Lesson already completed"
       );
     }
     if (
       isOnchainAcademyError(
         error,
         txMsg,
-        ONCHAIN_ACADEMY_ERROR__LESSON_OUT_OF_BOUNDS,
+        ONCHAIN_ACADEMY_ERROR__LESSON_OUT_OF_BOUNDS
       )
     ) {
       throw new ProgramError(
         "LESSON_OUT_OF_BOUNDS",
         400,
-        `Lesson index >= course.lesson_count on-chain. Create/use a course with lesson_count >= ${input.lessonIndex + 1}.`,
+        `Lesson index >= course.lesson_count on-chain. Create/use a course with lesson_count >= ${
+          input.lessonIndex + 1
+        }.`
       );
     }
 
@@ -375,7 +377,7 @@ export async function finalizeCourseOnChain(input: {
   const enrollmentPda = await getEnrollmentPda(
     input.courseId,
     input.learner,
-    context.programAddress,
+    context.programAddress
   );
 
   const maybeConfig = await fetchMaybeConfig(context.rpc, configPda);
@@ -397,7 +399,7 @@ export async function finalizeCourseOnChain(input: {
   const course = maybeCourse.data;
   const maybeEnrollment = await fetchMaybeEnrollment(
     context.rpc,
-    enrollmentPda,
+    enrollmentPda
   );
   if (!maybeEnrollment.exists) {
     throw new ProgramError("ENROLLMENT_NOT_FOUND", 403);
@@ -434,7 +436,7 @@ export async function finalizeCourseOnChain(input: {
     },
     {
       programAddress: context.programAddress,
-    },
+    }
   );
 
   const { value: latestBlockhash } = await context.rpc
@@ -446,7 +448,7 @@ export async function finalizeCourseOnChain(input: {
     (message) =>
       setTransactionMessageFeePayerSigner(context.backendSigner, message),
     (message) =>
-      setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, message),
+      setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, message)
   ) as TxMessage;
 
   if (shouldCreateLearnerAta) {
@@ -457,7 +459,7 @@ export async function finalizeCourseOnChain(input: {
         mint: config.xpMint,
         ata: learnerTokenAccount,
       }),
-      transactionMessage,
+      transactionMessage
     ) as TxMessage;
   }
   if (shouldCreateCreatorAta) {
@@ -468,13 +470,13 @@ export async function finalizeCourseOnChain(input: {
         mint: config.xpMint,
         ata: creatorTokenAccount,
       }),
-      transactionMessage,
+      transactionMessage
     ) as TxMessage;
   }
 
   transactionMessage = appendTransactionMessageInstruction(
     finalizeInstruction,
-    transactionMessage,
+    transactionMessage
   ) as TxMessage;
 
   const txMsg = transactionMessage;
@@ -489,26 +491,26 @@ export async function finalizeCourseOnChain(input: {
       isOnchainAcademyError(
         error,
         txMsg,
-        ONCHAIN_ACADEMY_ERROR__COURSE_NOT_COMPLETED,
+        ONCHAIN_ACADEMY_ERROR__COURSE_NOT_COMPLETED
       )
     ) {
       throw new ProgramError(
         "COURSE_NOT_COMPLETED",
         409,
-        "Not all lessons are completed",
+        "Not all lessons are completed"
       );
     }
     if (
       isOnchainAcademyError(
         error,
         txMsg,
-        ONCHAIN_ACADEMY_ERROR__COURSE_ALREADY_FINALIZED,
+        ONCHAIN_ACADEMY_ERROR__COURSE_ALREADY_FINALIZED
       )
     ) {
       throw new ProgramError(
         "COURSE_ALREADY_FINALIZED",
         409,
-        "Course already finalized",
+        "Course already finalized"
       );
     }
 
@@ -531,7 +533,7 @@ export async function issueCredentialOnChain(input: {
   const enrollmentPda = await getEnrollmentPda(
     input.courseId,
     input.learner,
-    context.programAddress,
+    context.programAddress
   );
 
   const maybeConfig = await fetchMaybeConfig(context.rpc, configPda);
@@ -550,7 +552,7 @@ export async function issueCredentialOnChain(input: {
 
   const maybeEnrollment = await fetchMaybeEnrollment(
     context.rpc,
-    enrollmentPda,
+    enrollmentPda
   );
   if (!maybeEnrollment.exists) {
     throw new ProgramError("ENROLLMENT_NOT_FOUND", 403);
@@ -573,7 +575,7 @@ export async function issueCredentialOnChain(input: {
     },
     {
       programAddress: context.programAddress,
-    },
+    }
   );
 
   const { value: latestBlockhash } = await context.rpc
@@ -585,7 +587,7 @@ export async function issueCredentialOnChain(input: {
       setTransactionMessageFeePayerSigner(context.backendSigner, message),
     (message) =>
       setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, message),
-    (message) => appendTransactionMessageInstruction(issueInstruction, message),
+    (message) => appendTransactionMessageInstruction(issueInstruction, message)
   );
 
   try {
@@ -599,29 +601,53 @@ export async function issueCredentialOnChain(input: {
       isOnchainAcademyError(
         error,
         transactionMessage,
-        ONCHAIN_ACADEMY_ERROR__COURSE_NOT_FINALIZED,
+        ONCHAIN_ACADEMY_ERROR__COURSE_NOT_FINALIZED
       )
     ) {
       throw new ProgramError(
         "COURSE_NOT_FINALIZED",
         409,
-        "Course must be finalized before issuing credential",
+        "Course must be finalized before issuing credential"
       );
     }
     if (
       isOnchainAcademyError(
         error,
         transactionMessage,
-        ONCHAIN_ACADEMY_ERROR__CREDENTIAL_ALREADY_ISSUED,
+        ONCHAIN_ACADEMY_ERROR__CREDENTIAL_ALREADY_ISSUED
       )
     ) {
       throw new ProgramError(
         "CREDENTIAL_ALREADY_ISSUED",
         409,
-        "Credential already issued for this enrollment",
+        "Credential already issued for this enrollment"
       );
     }
 
+    const err = error as unknown as Record<string, unknown> | undefined;
+    const data = err?.data as { logs?: unknown } | undefined;
+    const logs =
+      err?.logs ??
+      err?.transactionLogs ??
+      data?.logs ??
+      (err?.context as { logs?: unknown })?.logs;
+    const cause = error instanceof Error ? error.cause : undefined;
+    const causeErr = cause as Record<string, unknown> | undefined;
+    const causeLogs =
+      causeErr?.logs ??
+      causeErr?.transactionLogs ??
+      (causeErr?.data as { logs?: unknown })?.logs;
+    const allLogs = Array.isArray(logs)
+      ? logs
+      : Array.isArray(causeLogs)
+      ? causeLogs
+      : [];
+    console.error("[issueCredentialOnChain] transaction failed:", {
+      message: error instanceof Error ? error.message : String(error),
+      cause: cause instanceof Error ? cause.message : String(cause ?? "none"),
+      ...(allLogs.length > 0 ? { simulationLogs: allLogs } : {}),
+      errorKeys: err ? Object.keys(err) : [],
+    });
     throw new ProgramError("ISSUE_CREDENTIAL_FAILED", 500, String(error));
   }
 }
@@ -642,7 +668,7 @@ export async function upgradeCredentialOnChain(input: {
   const enrollmentPda = await getEnrollmentPda(
     input.courseId,
     input.learner,
-    context.programAddress,
+    context.programAddress
   );
 
   const maybeConfig = await fetchMaybeConfig(context.rpc, configPda);
@@ -661,7 +687,7 @@ export async function upgradeCredentialOnChain(input: {
 
   const maybeEnrollment = await fetchMaybeEnrollment(
     context.rpc,
-    enrollmentPda,
+    enrollmentPda
   );
   if (!maybeEnrollment.exists) {
     throw new ProgramError("ENROLLMENT_NOT_FOUND", 403);
@@ -683,7 +709,7 @@ export async function upgradeCredentialOnChain(input: {
     },
     {
       programAddress: context.programAddress,
-    },
+    }
   );
 
   const { value: latestBlockhash } = await context.rpc
@@ -696,7 +722,7 @@ export async function upgradeCredentialOnChain(input: {
     (message) =>
       setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, message),
     (message) =>
-      appendTransactionMessageInstruction(upgradeInstruction, message),
+      appendTransactionMessageInstruction(upgradeInstruction, message)
   );
 
   try {
@@ -710,26 +736,26 @@ export async function upgradeCredentialOnChain(input: {
       isOnchainAcademyError(
         error,
         transactionMessage,
-        ONCHAIN_ACADEMY_ERROR__COURSE_NOT_FINALIZED,
+        ONCHAIN_ACADEMY_ERROR__COURSE_NOT_FINALIZED
       )
     ) {
       throw new ProgramError(
         "COURSE_NOT_FINALIZED",
         409,
-        "Course must be finalized before upgrading credential",
+        "Course must be finalized before upgrading credential"
       );
     }
     if (
       isOnchainAcademyError(
         error,
         transactionMessage,
-        ONCHAIN_ACADEMY_ERROR__CREDENTIAL_ASSET_MISMATCH,
+        ONCHAIN_ACADEMY_ERROR__CREDENTIAL_ASSET_MISMATCH
       )
     ) {
       throw new ProgramError(
         "CREDENTIAL_ASSET_MISMATCH",
         409,
-        "Credential asset does not match enrollment record",
+        "Credential asset does not match enrollment record"
       );
     }
 

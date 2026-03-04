@@ -295,7 +295,7 @@ export function assertSiwsIntentMatches(
     action: AuthAction;
     courseId: string | null;
     lessonIndex: number | null;
-  },
+  }
 ): void {
   const courseIdMatch =
     expected.action === "profile"

@@ -35,7 +35,7 @@ async function createChallenge(
     action: "complete-lesson" | "finalize-course";
     courseId: string;
     lessonIndex: number | null;
-  },
+  }
 ) {
   const req = new Request("http://local/auth/create-signin-data", {
     method: "POST",
@@ -69,7 +69,7 @@ function buildSignedOutput(params: {
 
 async function completeLesson(
   app: ReturnType<typeof createApp>,
-  body: unknown,
+  body: unknown
 ) {
   const req = new Request("http://local/complete-lesson", {
     method: "POST",
@@ -90,7 +90,7 @@ async function run() {
 
   const { privateKey, publicKey } = generateKeyPairSync("ed25519");
   const publicKeyBytes = extractRawEd25519PublicKey(
-    publicKey.export({ format: "der", type: "spki" }) as Buffer,
+    publicKey.export({ format: "der", type: "spki" }) as Buffer
   );
   const wallet = encodeBase58(publicKeyBytes);
 

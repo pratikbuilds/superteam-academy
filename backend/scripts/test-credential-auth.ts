@@ -35,7 +35,7 @@ async function createChallenge(
     wallet: string;
     action: "issue-credential" | "upgrade-credential";
     courseId: string;
-  },
+  }
 ) {
   const req = new Request("http://local/auth/create-signin-data", {
     method: "POST",
@@ -72,7 +72,7 @@ function buildSignedOutput(params: {
 
 async function issueCredential(
   app: ReturnType<typeof createApp>,
-  body: unknown,
+  body: unknown
 ) {
   const req = new Request("http://local/issue-credential", {
     method: "POST",
@@ -85,7 +85,7 @@ async function issueCredential(
 
 async function upgradeCredential(
   app: ReturnType<typeof createApp>,
-  body: unknown,
+  body: unknown
 ) {
   const req = new Request("http://local/upgrade-credential", {
     method: "POST",
@@ -106,7 +106,7 @@ async function run() {
 
   const { privateKey, publicKey } = generateKeyPairSync("ed25519");
   const publicKeyBytes = extractRawEd25519PublicKey(
-    publicKey.export({ format: "der", type: "spki" }) as Buffer,
+    publicKey.export({ format: "der", type: "spki" }) as Buffer
   );
   const wallet = encodeBase58(publicKeyBytes);
 

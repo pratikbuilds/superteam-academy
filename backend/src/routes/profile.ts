@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { eq, and, desc } from "drizzle-orm";
+import { getAsset } from "../lib/das";
 import {
   verifyAndConsumeSiwsProof,
   assertSiwsIntentMatches,
@@ -23,7 +24,7 @@ profileRoutes.get("/profile/me", async (c) => {
   if (!parsed.success) {
     return c.json(
       { error: "MALFORMED_REQUEST", details: "learner required" },
-      400,
+      400
     );
   }
   try {
@@ -126,7 +127,7 @@ profileRoutes.put("/profile", async (c) => {
     if (error instanceof AuthError) {
       return c.json(
         { ok: false, error: error.code },
-        error.status as 400 | 401 | 409,
+        error.status as 400 | 401 | 409
       );
     }
     return handleRouteError(c, error, "PROFILE_UPDATE_FAILED", 500);
@@ -143,7 +144,7 @@ profileRoutes.get("/profile/by-wallet/:wallet", async (c) => {
       .select()
       .from(profiles)
       .where(
-        and(eq(profiles.wallet, wallet), eq(profiles.visibility, "public")),
+        and(eq(profiles.wallet, wallet), eq(profiles.visibility, "public"))
       )
       .limit(1);
     if (!profile) {
@@ -165,7 +166,7 @@ profileRoutes.get("/profile/by-username/:username", async (c) => {
       .select()
       .from(profiles)
       .where(
-        and(eq(profiles.username, username), eq(profiles.visibility, "public")),
+        and(eq(profiles.username, username), eq(profiles.visibility, "public"))
       )
       .limit(1);
     if (!profile) {
@@ -210,6 +211,56 @@ profileRoutes.get("/profile/:walletOrUsername/completed-courses", async (c) => {
   }
 });
 
+profileRoutes.get("/certificates/:assetId", async (c) => {
+  const assetId = c.req.param("assetId");
+  if (!assetId || assetId.length < 32) {
+    return c.json({ error: "INVALID_ASSET_ID" }, 400);
+  }
+  try {
+    const [row] = await db
+      .select()
+      .from(completedEnrollments)
+      .where(eq(completedEnrollments.credentialAsset, assetId))
+      .limit(1);
+    if (!row) {
+      console.log("[certificates] not found", assetId);
+      return c.json({ error: "CERTIFICATE_NOT_FOUND" }, 404);
+    }
+    const isDevnet = env.RPC_URL.includes("devnet");
+    const verificationLink = `https://explorer.solana.com/address/${assetId}${
+      isDevnet ? "?cluster=devnet" : ""
+    }`;
+    const base = {
+      wallet: row.wallet,
+      courseId: row.courseId,
+      completedAt: row.completedAt.toISOString(),
+      credentialAsset: row.credentialAsset!,
+      trackId: row.trackId,
+      trackLevel: row.trackLevel,
+      verificationLink,
+    };
+    const dasAsset = await getAsset(assetId);
+    if (dasAsset) {
+      console.log(
+        "[certificates] found with DAS",
+        assetId,
+        "owner:",
+        dasAsset.ownership?.owner
+      );
+      return c.json({
+        ...base,
+        mint: dasAsset.id,
+        metadataUri: dasAsset.content?.json_uri ?? null,
+        owner: dasAsset.ownership?.owner ?? null,
+      });
+    }
+    console.log("[certificates] found", assetId);
+    return c.json(base);
+  } catch (error) {
+    return handleRouteError(c, error, "CERTIFICATE_FETCH_FAILED", 500);
+  }
+});
+
 profileRoutes.get("/profile/:wallet/credentials", async (c) => {
   const wallet = c.req.param("wallet");
   if (!wallet || wallet.length < 32) {
@@ -226,7 +277,13 @@ profileRoutes.get("/profile/:wallet/credentials", async (c) => {
         asset: e.credentialAsset!,
         trackId: e.trackId,
         trackLevel: e.trackLevel,
-        verificationLink: `${env.RPC_URL.includes("devnet") ? "https://explorer.solana.com" : "https://explorer.solana.com"}/address/${e.credentialAsset}${env.RPC_URL.includes("devnet") ? "?cluster=devnet" : ""}`,
+        verificationLink: `${
+          env.RPC_URL.includes("devnet")
+            ? "https://explorer.solana.com"
+            : "https://explorer.solana.com"
+        }/address/${e.credentialAsset}${
+          env.RPC_URL.includes("devnet") ? "?cluster=devnet" : ""
+        }`,
       }));
     return c.json(credentials);
   } catch (error) {

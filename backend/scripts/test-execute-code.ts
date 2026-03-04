@@ -21,7 +21,7 @@ async function run() {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = (async (
     _url: string | URL | Request,
-    init?: RequestInit,
+    init?: RequestInit
   ) => {
     const payload = JSON.parse(String(init?.body ?? "{}")) as {
       stdin?: string;
@@ -38,7 +38,7 @@ async function run() {
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
-      },
+      }
     );
   }) as typeof globalThis.fetch;
 

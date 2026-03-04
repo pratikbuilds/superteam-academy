@@ -114,7 +114,7 @@ export async function executeCode(params: {
       throw new CodeExecutionError(
         "CODE_EXECUTION_UPSTREAM_ERROR",
         502,
-        `Piston API error (${response.status})`,
+        `Piston API error (${response.status})`
       );
     }
 
@@ -126,13 +126,13 @@ export async function executeCode(params: {
       throw new CodeExecutionError(
         "CODE_EXECUTION_TIMEOUT",
         504,
-        "Code execution timed out",
+        "Code execution timed out"
       );
     }
     throw new CodeExecutionError(
       "CODE_EXECUTION_FAILED",
       502,
-      error instanceof Error ? error.message : String(error),
+      error instanceof Error ? error.message : String(error)
     );
   } finally {
     clearTimeout(timeout);

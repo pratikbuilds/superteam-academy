@@ -13,6 +13,9 @@ const backendSchema = z.object({
   PROGRAM_ID: z.string().min(32),
   BACKEND_SIGNER_KEYPAIR: z.string().min(1),
   AUTHORITY_KEYPAIR: z.string().min(1).optional(),
+  TRACK_COLLECTION: z.string().min(32).optional(),
+  CREDENTIAL_METADATA_URI: z.string().url().optional(),
+  CREDENTIAL_NAME: z.string().min(1).optional(),
 });
 
 const parsed = backendSchema.safeParse({
@@ -28,6 +31,9 @@ const parsed = backendSchema.safeParse({
   PROGRAM_ID: process.env.PROGRAM_ID,
   BACKEND_SIGNER_KEYPAIR: process.env.BACKEND_SIGNER_KEYPAIR,
   AUTHORITY_KEYPAIR: process.env.AUTHORITY_KEYPAIR,
+  TRACK_COLLECTION: process.env.TRACK_COLLECTION,
+  CREDENTIAL_METADATA_URI: process.env.CREDENTIAL_METADATA_URI,
+  CREDENTIAL_NAME: process.env.CREDENTIAL_NAME,
 });
 
 if (!parsed.success) {
