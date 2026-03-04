@@ -33,7 +33,7 @@ profileRoutes.get("/profile/me", async (c) => {
       .where(eq(profiles.wallet, parsed.data.learner))
       .limit(1);
     if (!profile) {
-      return c.json({ error: "PROFILE_NOT_FOUND" }, 404);
+      return c.json(null, 200);
     }
     return c.json(profile);
   } catch (error) {

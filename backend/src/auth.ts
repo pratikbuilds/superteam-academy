@@ -248,17 +248,19 @@ export function verifyAndConsumeSiwsProof(params: {
     throw new AuthError("EXPIRED_MESSAGE");
   }
 
-  const normalizedOutput: SolanaSignInOutput = {
+  const normalizedOutput = {
     account: {
       address: output.account.address,
-      publicKey: bytesFromSerialized(output.account.publicKey),
-      chains: output.account.chains ?? [],
-      features: output.account.features ?? [],
+      publicKey: new Uint8Array(bytesFromSerialized(output.account.publicKey)),
+      chains: (output.account.chains ??
+        []) as SolanaSignInOutput["account"]["chains"],
+      features: (output.account.features ??
+        []) as SolanaSignInOutput["account"]["features"],
     },
-    signedMessage: bytesFromSerialized(output.signedMessage),
-    signature: bytesFromSerialized(output.signature),
+    signedMessage: new Uint8Array(bytesFromSerialized(output.signedMessage)),
+    signature: new Uint8Array(bytesFromSerialized(output.signature)),
     signatureType: output.signatureType,
-  };
+  } satisfies SolanaSignInOutput;
 
   const walletFromPublicKey = encodeBase58(normalizedOutput.account.publicKey);
   if (

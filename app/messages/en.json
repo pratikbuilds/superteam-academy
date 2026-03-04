@@ -6,7 +6,8 @@
   "header": {
     "goHome": "Go to home",
     "courses": "Courses",
-    "leaderboard": "Leaderboard"
+    "leaderboard": "Leaderboard",
+    "profile": "Profile"
   },
   "leaderboard": {
     "title": "Leaderboard",

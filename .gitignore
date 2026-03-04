@@ -41,6 +41,7 @@ wallets/
 
 # Claude local settings (user-specific permissions)
 .claude/settings.local.json
+.cursor/
 
 # Coverage / profiling
 coverage/

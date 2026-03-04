@@ -99,13 +99,22 @@ export function createLearnerRoutes(overrides?: {
 
       const course = await readCourse(request.courseId);
       if (course && "trackId" in course && "trackLevel" in course) {
+        const trackId = Number(course.trackId);
+        const trackLevel = Number(course.trackLevel);
+        if (!Number.isInteger(trackId) || !Number.isInteger(trackLevel))
+          return handleRouteError(
+            c,
+            new Error("Invalid track"),
+            "UNEXPECTED_FINALIZE_COURSE_ERROR",
+            500,
+          );
         await db.insert(completedEnrollments).values({
           wallet: session.wallet,
           courseId: request.courseId,
           completedAt: new Date(),
           credentialAsset: null,
-          trackId: course.trackId,
-          trackLevel: course.trackLevel,
+          trackId,
+          trackLevel,
         });
       }
 

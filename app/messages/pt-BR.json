@@ -6,7 +6,8 @@
   "header": {
     "goHome": "Ir para o início",
     "courses": "Cursos",
-    "leaderboard": "Ranking"
+    "leaderboard": "Ranking",
+    "profile": "Perfil"
   },
   "leaderboard": {
     "title": "Ranking",

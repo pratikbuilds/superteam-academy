@@ -288,13 +288,14 @@ export async function completeLessonOnChain(input: {
   const { value: latestBlockhash } = await context.rpc
     .getLatestBlockhash()
     .send();
-  let transactionMessage = pipe(
+  type TxMessage = Parameters<typeof signTransactionMessageWithSigners>[0];
+  let transactionMessage: TxMessage = pipe(
     createTransactionMessage({ version: 0 }),
     (message) =>
       setTransactionMessageFeePayerSigner(context.backendSigner, message),
     (message) =>
       setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, message),
-  );
+  ) as TxMessage;
 
   if (shouldCreateLearnerAta) {
     transactionMessage = appendTransactionMessageInstruction(
@@ -305,25 +306,26 @@ export async function completeLessonOnChain(input: {
         ata: learnerTokenAccount,
       }),
       transactionMessage,
-    );
+    ) as TxMessage;
   }
 
   transactionMessage = appendTransactionMessageInstruction(
     completeInstruction,
     transactionMessage,
-  );
+  ) as TxMessage;
 
+  const txMsg = transactionMessage;
   try {
     const signature = await signAndSendTransaction({
       context,
-      transactionMessage,
+      transactionMessage: txMsg,
     });
     return { signature };
   } catch (error) {
     if (
       isOnchainAcademyError(
         error,
-        transactionMessage,
+        txMsg,
         ONCHAIN_ACADEMY_ERROR__LESSON_ALREADY_COMPLETED,
       )
     ) {
@@ -336,7 +338,7 @@ export async function completeLessonOnChain(input: {
     if (
       isOnchainAcademyError(
         error,
-        transactionMessage,
+        txMsg,
         ONCHAIN_ACADEMY_ERROR__LESSON_OUT_OF_BOUNDS,
       )
     ) {
@@ -348,7 +350,8 @@ export async function completeLessonOnChain(input: {
     }
 
     const err = error as unknown as Record<string, unknown> | undefined;
-    const logs = err?.logs ?? err?.transactionLogs ?? err?.data?.logs;
+    const data = err?.data as { logs?: unknown } | undefined;
+    const logs = err?.logs ?? err?.transactionLogs ?? data?.logs;
     console.error("[completeLessonOnChain] transaction failed:", {
       message: error instanceof Error ? error.message : String(error),
       cause: error instanceof Error ? error.cause : undefined,
@@ -437,13 +440,14 @@ export async function finalizeCourseOnChain(input: {
   const { value: latestBlockhash } = await context.rpc
     .getLatestBlockhash()
     .send();
-  let transactionMessage = pipe(
+  type TxMessage = Parameters<typeof signTransactionMessageWithSigners>[0];
+  let transactionMessage: TxMessage = pipe(
     createTransactionMessage({ version: 0 }),
     (message) =>
       setTransactionMessageFeePayerSigner(context.backendSigner, message),
     (message) =>
       setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, message),
-  );
+  ) as TxMessage;
 
   if (shouldCreateLearnerAta) {
     transactionMessage = appendTransactionMessageInstruction(
@@ -454,7 +458,7 @@ export async function finalizeCourseOnChain(input: {
         ata: learnerTokenAccount,
       }),
       transactionMessage,
-    );
+    ) as TxMessage;
   }
   if (shouldCreateCreatorAta) {
     transactionMessage = appendTransactionMessageInstruction(
@@ -465,25 +469,26 @@ export async function finalizeCourseOnChain(input: {
         ata: creatorTokenAccount,
       }),
       transactionMessage,
-    );
+    ) as TxMessage;
   }
 
   transactionMessage = appendTransactionMessageInstruction(
     finalizeInstruction,
     transactionMessage,
-  );
+  ) as TxMessage;
 
+  const txMsg = transactionMessage;
   try {
     const signature = await signAndSendTransaction({
       context,
-      transactionMessage,
+      transactionMessage: txMsg,
     });
     return { signature };
   } catch (error) {
     if (
       isOnchainAcademyError(
         error,
-        transactionMessage,
+        txMsg,
         ONCHAIN_ACADEMY_ERROR__COURSE_NOT_COMPLETED,
       )
     ) {
@@ -496,7 +501,7 @@ export async function finalizeCourseOnChain(input: {
     if (
       isOnchainAcademyError(
         error,
-        transactionMessage,
+        txMsg,
         ONCHAIN_ACADEMY_ERROR__COURSE_ALREADY_FINALIZED,
       )
     ) {

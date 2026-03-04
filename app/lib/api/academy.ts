@@ -154,8 +154,7 @@ export async function getProfileMe(learner: string): Promise<Profile | null> {
   const res = await fetch(
     `${getBaseUrl()}/profile/me?learner=${encodeURIComponent(learner)}`,
   );
-  if (res.status === 404) return null;
-  return handleResponse(res, (d) => d as Profile);
+  return handleResponse(res, (d) => d as Profile | null);
 }
 
 export async function getProfileByWallet(

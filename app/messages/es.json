@@ -6,7 +6,8 @@
   "header": {
     "goHome": "Ir al inicio",
     "courses": "Cursos",
-    "leaderboard": "Clasificación"
+    "leaderboard": "Clasificación",
+    "profile": "Perfil"
   },
   "leaderboard": {
     "title": "Clasificación",
