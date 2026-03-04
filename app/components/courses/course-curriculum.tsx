@@ -79,7 +79,7 @@ export function CourseCurriculum({ course, enrollment }: Props) {
             className={cn(
               "rounded-xl border",
               status === "in-progress" && "border-primary",
-              status === "locked" && "border-border/60"
+              status === "locked" && "border-border/60",
             )}
           >
             <AccordionTrigger className="gap-3 px-4 py-3.5 hover:no-underline sm:px-5 sm:py-4 data-[state=open]:pb-2">
@@ -91,7 +91,7 @@ export function CourseCurriculum({ course, enrollment }: Props) {
                     status === "completed" && "bg-primary/15 text-primary",
                     status === "in-progress" &&
                       "border border-primary/40 font-mono font-bold text-primary",
-                    status === "locked" && "bg-muted text-muted-foreground"
+                    status === "locked" && "bg-muted text-muted-foreground",
                   )}
                 >
                   {status === "completed" ? (
@@ -105,15 +105,14 @@ export function CourseCurriculum({ course, enrollment }: Props) {
 
                 <div className="min-w-0 flex-1">
                   <span className="block text-sm font-semibold sm:text-base">
-                    Module {String(moduleIdx + 1).padStart(2, "0")}:{" "}
-                    {mod.title}
+                    Module {String(moduleIdx + 1).padStart(2, "0")}: {mod.title}
                   </span>
                   <span
                     className={cn(
                       "block font-mono text-[10px] font-medium uppercase tracking-widest sm:text-[11px]",
                       status === "in-progress"
                         ? "text-primary"
-                        : "text-muted-foreground"
+                        : "text-muted-foreground",
                     )}
                   >
                     {status === "completed" &&
@@ -139,10 +138,10 @@ export function CourseCurriculum({ course, enrollment }: Props) {
                   return (
                     <li key={lesson.id}>
                       <Link
-                        href={`/courses/${course.slug}/lessons/${lesson.id}`}
+                        href={`/courses/${course.slug}/lessons/${lesson.id}?type=${lesson.type}`}
                         className={cn(
                           "flex items-center gap-3 py-2.5 sm:py-3 transition-colors hover:bg-muted/50 -mx-4 px-4 sm:-mx-5 sm:px-5 rounded-md",
-                          locked && "opacity-40"
+                          locked && "opacity-40",
                         )}
                       >
                         {/* left icon */}
@@ -164,7 +163,7 @@ export function CourseCurriculum({ course, enrollment }: Props) {
                           className={cn(
                             "min-w-0 flex-1 text-sm",
                             completed &&
-                              "text-muted-foreground line-through decoration-muted-foreground/40"
+                              "text-muted-foreground line-through decoration-muted-foreground/40",
                           )}
                         >
                           {moduleIdx + 1}.{i + 1} {lesson.title}

@@ -56,8 +56,7 @@ export function CourseDetailHeader({ course, prerequisiteTitle }: Props) {
               href={`/courses/${course.prerequisiteSlug}`}
               className="font-medium underline underline-offset-2 hover:text-foreground"
             >
-              {prerequisiteTitle ??
-                course.prerequisiteSlug!.replace(/-/g, " ")}
+              {prerequisiteTitle ?? course.prerequisiteSlug!.replace(/-/g, " ")}
             </Link>
           </p>
         )}

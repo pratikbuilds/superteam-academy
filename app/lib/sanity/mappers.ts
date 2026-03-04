@@ -43,7 +43,11 @@ type SanityLesson =
       prompt: string;
       starterCode: string;
       language: "rust" | "typescript";
-      testCases: Array<{ input: string; expectedOutput: string; label: string }>;
+      testCases: Array<{
+        input: string;
+        expectedOutput: string;
+        label: string;
+      }>;
     };
 
 type SanityModule = {
@@ -77,7 +81,7 @@ function mapLesson(lesson: SanityLesson): ContentLesson | ChallengeLesson {
       type: "content",
       duration: lesson.duration,
       xp: lesson.xp,
-      body: lesson.body,
+      body: lesson.body ?? "",
       videoUrl: lesson.videoUrl,
     };
   }
@@ -103,7 +107,9 @@ function mapModule(mod: SanityModule): Module {
   };
 }
 
-export function mapSanityCourseToCourse(doc: SanityCourse | null): Course | null {
+export function mapSanityCourseToCourse(
+  doc: SanityCourse | null,
+): Course | null {
   if (!doc) return null;
   const onChainCourseId = doc.slug?.trim();
   if (!onChainCourseId) return null;
@@ -111,9 +117,8 @@ export function mapSanityCourseToCourse(doc: SanityCourse | null): Course | null
   const modules = doc.modules?.map(mapModule) ?? [];
   const totalLessons = modules.reduce((sum, m) => sum + m.lessons.length, 0);
   const totalDuration = modules.reduce(
-    (sum, m) =>
-      sum + m.lessons.reduce((s, l) => s + l.duration, 0),
-    0
+    (sum, m) => sum + m.lessons.reduce((s, l) => s + l.duration, 0),
+    0,
   );
 
   const thumbnail = urlFor(doc.thumbnail) || "";

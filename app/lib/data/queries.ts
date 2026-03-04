@@ -12,18 +12,20 @@ export type LessonWithContext = {
   lessonIndexInModule: number;
   moduleIndex: number;
   module: Module;
-  prevLesson: { id: string; title: string } | null;
-  nextLesson: { id: string; title: string } | null;
+  prevLesson: { id: string; title: string; type: Lesson["type"] } | null;
+  nextLesson: { id: string; title: string; type: Lesson["type"] } | null;
 };
 
 function getLessonAtFlatIndex(
   course: Course,
-  index: number
-): { id: string; title: string } | null {
+  index: number,
+): { id: string; title: string; type: Lesson["type"] } | null {
   let flatIndex = 0;
   for (const mod of course.modules) {
     for (const lesson of mod.lessons) {
-      if (flatIndex === index) return { id: lesson.id, title: lesson.title };
+      if (flatIndex === index) {
+        return { id: lesson.id, title: lesson.title, type: lesson.type };
+      }
       flatIndex++;
     }
   }
@@ -32,7 +34,7 @@ function getLessonAtFlatIndex(
 
 export function getLessonBySlugFromCourse(
   course: Course,
-  lessonSlug: string
+  lessonSlug: string,
 ): LessonWithContext | null {
   let flatIndex = 0;
   for (let mi = 0; mi < course.modules.length; mi++) {
@@ -71,7 +73,7 @@ export async function getActiveCourses(): Promise<Course[]> {
 }
 
 export const getCourseBySlug = cache(async function getCourseBySlug(
-  slug: string
+  slug: string,
 ): Promise<Course | undefined> {
   const course = await fetchCourseBySlugFromSanity(slug);
   return course ?? undefined;
@@ -84,7 +86,7 @@ export async function getCoursesByTrack(trackId: string): Promise<Course[]> {
 export const getLessonBySlug = cache(async function getLessonBySlug(
   courseSlug: string,
   lessonSlug: string,
-  courseOverride?: Course
+  courseOverride?: Course,
 ): Promise<LessonWithContext | null> {
   const course = courseOverride ?? (await getCourseBySlug(courseSlug));
   if (!course) return null;

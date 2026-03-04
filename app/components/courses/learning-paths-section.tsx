@@ -24,10 +24,7 @@ export function LearningPathsSection({ title }: { title: string }) {
       <h2 className="font-heading text-xs font-semibold uppercase tracking-widest text-muted-foreground">
         {title}
       </h2>
-      <ul
-        className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-        role="list"
-      >
+      <ul className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" role="list">
         {tracks.map((track) => {
           const Icon = iconMap[track.icon] ?? Cube;
           return (
@@ -58,7 +55,11 @@ export function LearningPathsSection({ title }: { title: string }) {
                   </span>
                   <span className="inline-flex items-center gap-1 font-heading text-xs font-medium text-primary transition-all duration-200 group-hover:gap-2">
                     View path
-                    <ArrowRight className="size-3.5" weight="bold" aria-hidden />
+                    <ArrowRight
+                      className="size-3.5"
+                      weight="bold"
+                      aria-hidden
+                    />
                   </span>
                 </div>
               </Link>

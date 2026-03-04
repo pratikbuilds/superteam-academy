@@ -8,6 +8,7 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { ConnectButton } from "@/components/connect-wallet";
 import { useEnroll } from "@/lib/hooks/use-enroll";
+import { useXpBalance } from "@/lib/hooks/use-xp-balance";
 import {
   Clock,
   Lightning,
@@ -38,6 +39,7 @@ export function CourseDetailSidebar({ course, enrollment }: Props) {
   const t = useTranslations("courseDetail");
   const { isConnected } = useWallet();
   const { enroll, isEnrolling, error: enrollError } = useEnroll();
+  const { xp: walletXp, loading: xpLoading } = useXpBalance();
 
   const completedCount = enrollment.completedLessons.length;
   const progress =
@@ -90,7 +92,11 @@ export function CourseDetailSidebar({ course, enrollment }: Props) {
           <li className="flex items-center gap-2 text-muted-foreground">
             <ChartBar className="size-4 shrink-0" weight="duotone" />
             <span>
-              DIFFICULTY <DifficultyBadge difficulty={course.difficulty} className="ml-0.5" />
+              DIFFICULTY{" "}
+              <DifficultyBadge
+                difficulty={course.difficulty}
+                className="ml-0.5"
+              />
             </span>
           </li>
           <li className="flex items-center gap-2 text-muted-foreground">
@@ -99,8 +105,17 @@ export function CourseDetailSidebar({ course, enrollment }: Props) {
           </li>
           <li className="flex items-center gap-2 text-muted-foreground">
             <Users className="size-4 shrink-0" weight="duotone" />
+            <span>PEERS {course.enrollmentCount} Active</span>
+          </li>
+          <li className="flex items-center gap-2 text-muted-foreground">
+            <Lightning className="size-4 shrink-0" weight="duotone" />
             <span>
-              PEERS {course.enrollmentCount} Active
+              YOUR XP{" "}
+              {isConnected
+                ? xpLoading
+                  ? "..."
+                  : walletXp.toLocaleString()
+                : "-"}
             </span>
           </li>
         </ul>
