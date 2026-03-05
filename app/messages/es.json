@@ -8,7 +8,9 @@
     "courses": "Cursos",
     "dashboard": "Panel",
     "leaderboard": "Clasificación",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "openMenu": "Abrir menú",
+    "navigation": "Navegación"
   },
   "leaderboard": {
     "title": "Clasificación",

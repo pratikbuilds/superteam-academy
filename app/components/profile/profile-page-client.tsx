@@ -50,7 +50,9 @@ import {
   type Credential,
   type Profile,
 } from "@/lib/api/academy";
+import { levelFromXp } from "@/lib/academy/level";
 import { saveProfileWithWalletAuth } from "@/lib/academy/profile";
+import { useXpBalance } from "@/lib/hooks/use-xp-balance";
 import { env } from "@/lib/env";
 import { cn } from "@/lib/utils";
 
@@ -259,6 +261,7 @@ export function ProfilePageClient({
   const { isConnected } = useWallet();
   const { address } = useAccount();
   const { signer } = useTransactionSigner();
+  const { xp, loading: xpLoading } = useXpBalance();
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [completed, setCompleted] = useState<CompletedEnrollment[]>([]);
@@ -709,7 +712,20 @@ export function ProfilePageClient({
               Credentials, achievements, and a clear public card for your work.
             </p>
           </div>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5">
+            {canEdit && (
+              <>
+                <Badge
+                  variant="secondary"
+                  className="font-semibold tabular-nums text-primary"
+                >
+                  Level {xpLoading ? "…" : levelFromXp(xp)}
+                </Badge>
+                <Badge variant="outline">
+                  {xpLoading ? "…" : `${xp.toLocaleString()} XP`}
+                </Badge>
+              </>
+            )}
             <Badge variant="outline">{credentials.length} Credentials</Badge>
             <Badge variant="outline">{achievements.length} Achievements</Badge>
             <Badge variant="outline">{completed.length} Courses</Badge>

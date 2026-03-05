@@ -8,7 +8,9 @@
     "courses": "Courses",
     "dashboard": "Dashboard",
     "leaderboard": "Leaderboard",
-    "profile": "Profile"
+    "profile": "Profile",
+    "openMenu": "Open menu",
+    "navigation": "Navigation"
   },
   "leaderboard": {
     "title": "Leaderboard",

@@ -11,6 +11,7 @@ import {
   AcademyApiError,
   completeLessonWithWalletAuth,
 } from "@/lib/academy/complete-lesson";
+import { recordActivity } from "@/lib/academy/streak";
 import { useEnrollmentStatus } from "./use-enrollment-status";
 
 function mapCompletionError(error: unknown): string {
@@ -134,6 +135,7 @@ export function useLessonCompletion(
           signer,
         });
 
+        recordActivity(address);
         toast.success("Lesson completed on-chain", {
           description: `${result.signature.slice(
             0,

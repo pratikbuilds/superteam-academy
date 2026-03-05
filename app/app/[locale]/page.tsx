@@ -71,27 +71,27 @@ export default function Page() {
         <div className="stbr-pattern-dashed pointer-events-none absolute inset-0" />
         <div className="stbr-pattern-cross pointer-events-none absolute inset-0" />
 
-        <div className="relative z-10 mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-18">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-18">
           <div className="grid gap-8 lg:grid-cols-12 lg:gap-10">
             <div className="animate-in slide-in-from-bottom-5 fade-in-0 duration-700 lg:col-span-7 lg:pr-4">
-              <h1 className="mt-4 max-w-3xl text-4xl leading-[0.98] font-black tracking-tight sm:text-5xl lg:text-[4.4rem]">
+              <h1 className="mt-2 max-w-3xl text-3xl leading-[0.98] font-black tracking-tight text-balance sm:mt-4 sm:text-5xl lg:text-[4.4rem]">
                 <span className="font-heading">Learn like a builder.</span>
                 <span className="mt-2 block bg-gradient-to-r from-primary via-primary to-primary/70 bg-clip-text font-heading text-transparent">
                   Prove it on-chain.
                 </span>
               </h1>
 
-              <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-[1.12rem]">
+              <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground text-pretty sm:mt-5 sm:text-[1.12rem]">
                 Superteam Academy is built for serious Solana developers. Write
                 Rust in the browser, clear challenge suites, and leave with
                 proof that compounding teams actually trust.
               </p>
 
-              <div className="mt-7 flex flex-wrap items-center gap-3">
+              <div className="mt-6 flex flex-col gap-3 sm:mt-7 sm:flex-row sm:flex-wrap sm:items-center">
                 <Button
                   size="lg"
                   asChild
-                  className="min-w-[13rem] shadow-[0_10px_28px_-16px_rgba(0,140,76,0.75)]"
+                  className="min-h-12 w-full justify-center shadow-[0_10px_28px_-16px_rgba(0,140,76,0.75)] sm:min-h-0 sm:min-w-[13rem] sm:w-auto"
                 >
                   <Link href="/courses">
                     Enter the curriculum
@@ -102,7 +102,7 @@ export default function Page() {
                   size="lg"
                   variant="outline"
                   asChild
-                  className="min-w-[11rem] border-border/80 bg-card/60"
+                  className="min-h-12 w-full justify-center border-border/80 bg-card/60 sm:min-h-0 sm:min-w-[11rem] sm:w-auto"
                 >
                   <Link href="/leaderboard">See top builders</Link>
                 </Button>
@@ -110,7 +110,7 @@ export default function Page() {
             </div>
 
             <div className="animate-in slide-in-from-bottom-8 fade-in-0 duration-1000 lg:col-span-5 lg:pt-1">
-              <div className="relative overflow-hidden rounded-3xl border border-border/75 bg-card/90 p-5 shadow-[0_22px_62px_-46px_rgba(27,35,29,0.9)] sm:p-6">
+              <div className="relative overflow-hidden rounded-2xl border border-border/75 bg-card/90 p-4 shadow-[0_22px_62px_-46px_rgba(27,35,29,0.9)] sm:rounded-3xl sm:p-6">
                 <div className="pointer-events-none absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_100%_0%,color-mix(in_srgb,var(--primary)_28%,transparent)_0%,transparent_54%)]" />
                 <p className="relative text-xs font-semibold tracking-[0.14em] text-primary uppercase">
                   How it works
@@ -151,12 +151,12 @@ export default function Page() {
         className="relative border-b border-border/70 bg-muted/20"
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-background/60 to-transparent" />
-        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
-          <div className="grid gap-3 md:grid-cols-3">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
             {proofPoints.map((point) => (
               <article
                 key={point.label}
-                className="rounded-2xl border border-border/70 bg-card/85 p-4 shadow-[0_14px_30px_-28px_rgba(27,35,29,0.86)] dark:bg-card/65"
+                className="rounded-2xl border border-border/70 bg-card/85 p-4 shadow-[0_14px_30px_-28px_rgba(27,35,29,0.86)] dark:bg-card/65 sm:p-4"
               >
                 <div className="mb-2 h-1.5 w-12 rounded-full bg-primary/55" />
                 <p className="text-2xl font-black tracking-tight">
@@ -175,25 +175,27 @@ export default function Page() {
       </section>
 
       <section className="relative border-b border-border/70">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
           <div className="grid gap-8 lg:grid-cols-12 lg:gap-10">
             <div className="lg:col-span-4 lg:pr-2">
               <p className="text-xs font-semibold tracking-[0.16em] text-primary uppercase">
                 Tracks That Compound
               </p>
-              <h2 className="mt-3 max-w-sm font-heading text-3xl font-black tracking-tight md:text-4xl">
+              <h2 className="mt-3 max-w-sm font-heading text-2xl font-black tracking-tight text-balance sm:text-3xl md:text-4xl">
                 Structured paths, zero fluff.
               </h2>
-              <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground sm:text-base">
+              <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground text-pretty sm:text-base">
                 Each track is designed like a shipping system: fundamentals,
                 advanced patterns, and production-level challenge work.
               </p>
               <div className="mt-5 rounded-2xl border border-border/70 bg-card/75 px-4 py-3 shadow-[0_14px_32px_-26px_rgba(27,35,29,0.75)]">
                 <p className="text-xs text-muted-foreground">Total courses</p>
-                <p className="text-2xl font-black">{totalCourses}</p>
+                <p className="text-2xl font-black tabular-nums">
+                  {totalCourses}
+                </p>
               </div>
               <Button
-                className="mt-6 w-full max-w-[14rem]"
+                className="mt-6 min-h-11 w-full sm:min-h-0 sm:max-w-[14rem]"
                 variant="outline"
                 asChild
               >
@@ -204,13 +206,13 @@ export default function Page() {
               </Button>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3 lg:col-span-8">
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:col-span-8">
               {tracks.map((track, index) => {
                 const Icon = trackIconMap[track.icon] ?? Cube;
                 return (
                   <article
                     key={track.id}
-                    className="group relative overflow-hidden rounded-3xl border border-border/70 bg-card/88 p-5 shadow-[0_14px_28px_-24px_rgba(27,35,29,0.85)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_-30px_rgba(27,35,29,0.95)] dark:bg-card/65"
+                    className="group relative overflow-hidden rounded-2xl border border-border/70 bg-card/88 p-4 shadow-[0_14px_28px_-24px_rgba(27,35,29,0.85)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_-30px_rgba(27,35,29,0.95)] dark:bg-card/65 sm:rounded-3xl sm:p-5"
                   >
                     <div className="relative">
                       <div className="flex items-start justify-between">
@@ -249,27 +251,27 @@ export default function Page() {
         <div className="pointer-events-none absolute inset-0 opacity-34 [background-image:radial-gradient(circle_at_90%_8%,color-mix(in_srgb,var(--primary)_26%,transparent)_0%,transparent_48%)]" />
         <div className="pointer-events-none absolute inset-0 opacity-22 [background-image:repeating-linear-gradient(-32deg,transparent_0_20px,color-mix(in_srgb,var(--border)_70%,transparent)_20px_21px)]" />
 
-        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
-          <div className="rounded-3xl border border-border/70 bg-card/86 p-6 shadow-[0_24px_90px_-58px_rgba(0,0,0,0.75)] backdrop-blur sm:p-8 lg:p-10">
+        <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
+          <div className="rounded-2xl border border-border/70 bg-card/86 p-5 shadow-[0_24px_90px_-58px_rgba(0,0,0,0.75)] backdrop-blur sm:rounded-3xl sm:p-8 lg:p-10">
             <div className="grid gap-8 lg:grid-cols-[1.35fr_0.9fr] lg:items-stretch">
               <div className="max-w-3xl">
                 <p className="text-xs font-semibold tracking-[0.16em] text-secondary uppercase">
                   Start Building
                 </p>
-                <h2 className="mt-3 font-heading text-4xl leading-[1.02] font-black tracking-tight sm:text-5xl lg:text-6xl">
+                <h2 className="mt-3 font-heading text-2xl leading-[1.02] font-black tracking-tight text-balance sm:text-4xl lg:text-6xl">
                   From guided lessons to provable builder reputation.
                 </h2>
-                <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
+                <p className="mt-4 text-base leading-relaxed text-muted-foreground text-pretty sm:text-lg">
                   Graduate from toy projects. Ship challenge-validated Solana
                   work, mint wallet-native credentials, and get recognized on a
                   public leaderboard.
                 </p>
 
-                <div className="mt-7 flex flex-wrap items-center gap-3">
+                <div className="mt-6 flex flex-col gap-3 sm:mt-7 sm:flex-row sm:flex-wrap sm:items-center">
                   <Button
                     size="lg"
                     asChild
-                    className="h-14 min-w-[240px] px-9 text-base font-semibold"
+                    className="min-h-12 w-full justify-center px-6 text-base font-semibold sm:min-h-14 sm:min-w-[240px] sm:w-auto sm:px-9"
                   >
                     <Link href="/courses">
                       Start learning now
@@ -280,7 +282,7 @@ export default function Page() {
                     size="lg"
                     variant="outline"
                     asChild
-                    className="h-14 min-w-[220px] border-foreground/20 bg-background/60 px-8 text-base font-semibold"
+                    className="min-h-12 w-full justify-center border-foreground/20 bg-background/60 px-6 text-base font-semibold sm:min-h-14 sm:min-w-[220px] sm:w-auto sm:px-8"
                   >
                     <Link href="/leaderboard">Open leaderboard</Link>
                   </Button>

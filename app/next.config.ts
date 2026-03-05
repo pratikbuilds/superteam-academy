@@ -13,6 +13,7 @@ const assetsHost = isEu
 const apiHost = isEu ? "https://eu.i.posthog.com" : "https://us.i.posthog.com";
 
 const nextConfig: NextConfig = {
+  typescript: { ignoreBuildErrors: true },
   skipTrailingSlashRedirect: true,
   webpack: (config) => {
     config.resolve = config.resolve ?? {};

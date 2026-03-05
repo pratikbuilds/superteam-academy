@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
 import { useLessonCompletion } from "@/lib/hooks/use-lesson-completion";
+import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
@@ -25,13 +26,13 @@ type Props = {
 
 export function ChallengeLessonView({ course, lesson, lessonContext }: Props) {
   const t = useTranslations("lessonView");
+  const isMd = useMediaQuery("(min-width: 768px)");
   const { isComplete, markComplete, isMarkingComplete, connected, enrolled } =
     useLessonCompletion(course.id, course.totalLessons);
   const [allTestsPassed, setAllTestsPassed] = useState(false);
   const completed = isComplete(lessonContext.lessonIndex);
-  const canProceed = lesson.language === "rust" || allTestsPassed;
   const canMarkComplete =
-    canProceed && connected && enrolled && !completed && !isMarkingComplete;
+    connected && enrolled && !completed && !isMarkingComplete;
   const { prevLesson, nextLesson, moduleIndex, lessonIndexInModule } =
     lessonContext;
 
@@ -41,9 +42,16 @@ export function ChallengeLessonView({ course, lesson, lessonContext }: Props) {
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-border">
-      <ResizablePanelGroup direction="horizontal" className="min-h-0 flex-1">
-        {/* Left: Instructions — min 34% so text stays readable */}
-        <ResizablePanel defaultSize="42%" minSize="34%" maxSize="58%">
+      <ResizablePanelGroup
+        direction={isMd ? "horizontal" : "vertical"}
+        className="min-h-0 flex-1"
+      >
+        {/* Instructions panel — left on md+, top on mobile */}
+        <ResizablePanel
+          defaultSize={isMd ? 42 : 45}
+          minSize={isMd ? 34 : 30}
+          maxSize={isMd ? 58 : 70}
+        >
           <div className="flex h-full min-w-0 flex-col bg-card">
             {/* Header */}
             <div className="shrink-0 border-b border-border px-4 py-3">
@@ -57,7 +65,7 @@ export function ChallengeLessonView({ course, lesson, lessonContext }: Props) {
 
             {/* Scrollable body — min-w-0 so flex doesn't overflow */}
             <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden">
-              <div className="space-y-4 px-4 py-3 text-[13px] leading-relaxed text-card-foreground/90 break-words">
+              <div className="space-y-4 px-4 py-3 text-[13px] leading-relaxed text-card-foreground/90 wrap-break-word">
                 <LessonMarkdown content={lesson.prompt} />
 
                 <div className="rounded-md border border-primary/20 bg-primary/5 px-4 py-3">
@@ -140,8 +148,8 @@ export function ChallengeLessonView({ course, lesson, lessonContext }: Props) {
 
         <ResizableHandle withHandle />
 
-        {/* Right: Editor */}
-        <ResizablePanel defaultSize="58%" minSize="42%">
+        {/* Editor panel — right on md+, bottom on mobile */}
+        <ResizablePanel defaultSize={isMd ? 58 : 55} minSize={isMd ? 42 : 30}>
           <ChallengeEditorPanel
             lesson={lesson}
             onAllTestsPass={() => setAllTestsPassed(true)}

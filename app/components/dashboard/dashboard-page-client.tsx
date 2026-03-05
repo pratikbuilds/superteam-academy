@@ -23,8 +23,14 @@ import {
   getLeaderboard,
   type Achievement,
 } from "@/lib/api/academy";
+import {
+  levelFromXp,
+  levelProgressPercent,
+  xpToNextLevel,
+} from "@/lib/academy/level";
 import { getEnrollmentPda } from "@/lib/academy/pdas";
 import { getCompletedLessonIndices } from "@/lib/academy/lesson-bitmap";
+import { useStreak } from "@/lib/hooks/use-streak";
 import { useXpBalance } from "@/lib/hooks/use-xp-balance";
 import type { Course } from "@/lib/data/types";
 import { Badge } from "@/components/ui/badge";
@@ -52,6 +58,8 @@ type ActivityItem = {
   timestampMs: number;
 };
 
+const DASHBOARD_META_REFRESH_INTERVAL_MS = 30_000;
+
 function formatDateTime(valueMs: number): string {
   return new Intl.DateTimeFormat(undefined, {
     dateStyle: "medium",
@@ -61,6 +69,10 @@ function formatDateTime(valueMs: number): string {
 
 function timestampSecondsToMs(value: number | bigint): number {
   return Number(value) * 1000;
+}
+
+function normalizeWalletAddress(value: string): string {
+  return value.trim();
 }
 
 function nextLessonTitle(
@@ -79,34 +91,6 @@ function nextLessonTitle(
   return null;
 }
 
-function createMockStreakCalendar(): Array<{
-  dateKey: string;
-  active: boolean;
-}> {
-  const today = new Date();
-  const activeOffsets = new Set([
-    0, 1, 2, 4, 5, 8, 10, 13, 16, 17, 20, 22, 24, 29, 32,
-  ]);
-  return Array.from({ length: 35 }, (_, idx) => {
-    const daysAgo = 34 - idx;
-    const d = new Date(today);
-    d.setDate(today.getDate() - daysAgo);
-    const dateKey = d.toISOString().slice(0, 10);
-    return { dateKey, active: activeOffsets.has(daysAgo) };
-  });
-}
-
-function currentStreakFromCalendar(
-  days: Array<{ dateKey: string; active: boolean }>
-): number {
-  let streak = 0;
-  for (let i = days.length - 1; i >= 0; i -= 1) {
-    if (!days[i].active) break;
-    streak += 1;
-  }
-  return streak;
-}
-
 export function DashboardPageClient({
   activeCourses,
 }: DashboardPageClientProps) {
@@ -114,6 +98,7 @@ export function DashboardPageClient({
   const { address } = useAccount();
   const { client, ready } = useSolanaClient();
   const { xp, loading: xpLoading } = useXpBalance();
+  const streakState = useStreak(address ?? undefined);
 
   const [enrolledCourses, setEnrolledCourses] = useState<
     EnrolledCourseProgress[]
@@ -123,98 +108,167 @@ export function DashboardPageClient({
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [loadingMeta, setLoadingMeta] = useState(false);
 
-  const loadDashboardData = useCallback(async () => {
-    if (!isConnected || !address || !ready || !client) {
-      setEnrolledCourses([]);
-      setRank(null);
-      setAchievements([]);
-      return;
-    }
+  const loadDashboardMeta = useCallback(
+    async (signal?: AbortSignal) => {
+      if (!address) return;
+      const normalizedAddress = normalizeWalletAddress(address);
 
-    setLoadingEnrollments(true);
-    setLoadingMeta(true);
-    try {
-      const enrollmentRows = await Promise.all(
-        activeCourses.map(
-          async (course): Promise<EnrolledCourseProgress | null> => {
-            const enrollmentPda = await getEnrollmentPda(
-              course.id,
-              address as Address
-            );
-            const maybeEnrollment = await fetchMaybeEnrollment(
-              client.rpc,
-              enrollmentPda
-            );
-            if (!maybeEnrollment.exists) return null;
+      setLoadingMeta(true);
+      try {
+        const [leaderboardResult, achievementsResult] = await Promise.allSettled(
+          [getLeaderboard(), getAchievements(address)]
+        );
 
-            const completed = getCompletedLessonIndices(
-              maybeEnrollment.data.lessonFlags,
-              course.totalLessons
-            );
-            const completedSet = new Set(completed);
-            const completionPercent =
-              course.totalLessons > 0
-                ? Math.round((completed.length / course.totalLessons) * 100)
-                : 0;
+        if (signal?.aborted) return;
 
-            return {
-              course,
-              completedLessons: completed.length,
-              completionPercent,
-              nextLesson: nextLessonTitle(course, completedSet),
-              enrolledAt: maybeEnrollment.data.enrolledAt,
-              completedAt: unwrapOption(maybeEnrollment.data.completedAt, null),
-            };
-          }
-        )
-      );
+        if (leaderboardResult.status === "fulfilled") {
+          const myEntry = leaderboardResult.value.find(
+            (entry) => normalizeWalletAddress(entry.wallet) === normalizedAddress
+          );
+          setRank(myEntry?.rank ?? null);
+        } else {
+          console.error("Failed to load leaderboard", leaderboardResult.reason);
+          setRank(null);
+        }
 
-      const onlyEnrolled = enrollmentRows.filter(
-        (row): row is EnrolledCourseProgress => row !== null
-      );
+        if (achievementsResult.status === "fulfilled") {
+          setAchievements(
+            achievementsResult.value.sort((a, b) => b.awardedAt - a.awardedAt)
+          );
+        } else {
+          console.error(
+            "Failed to load achievements",
+            achievementsResult.reason
+          );
+          setAchievements([]);
+        }
+      } catch (error) {
+        if (signal?.aborted) return;
+        console.error("Failed to load dashboard metadata", error);
+        setRank(null);
+        setAchievements([]);
+      } finally {
+        if (!signal?.aborted) {
+          setLoadingMeta(false);
+        }
+      }
+    },
+    [address]
+  );
 
-      onlyEnrolled.sort((a, b) => Number(b.enrolledAt - a.enrolledAt));
-      setEnrolledCourses(onlyEnrolled);
-      setLoadingEnrollments(false);
+  const loadDashboardData = useCallback(
+    async (signal?: AbortSignal) => {
+      if (!isConnected) {
+        setEnrolledCourses([]);
+        setRank(null);
+        setAchievements([]);
+        return;
+      }
+      if (!address || !ready || !client) return;
 
-      const [leaderboardEntries, achievementRows] = await Promise.all([
-        getLeaderboard(),
-        getAchievements(address),
-      ]);
+      setLoadingEnrollments(true);
+      try {
+        const enrollmentRows = await Promise.allSettled(
+          activeCourses.map(
+            async (course): Promise<EnrolledCourseProgress | null> => {
+              if (signal?.aborted) return null;
+              const enrollmentPda = await getEnrollmentPda(
+                course.id,
+                address as Address
+              );
+              const maybeEnrollment = await fetchMaybeEnrollment(
+                client.rpc,
+                enrollmentPda
+              );
+              if (!maybeEnrollment.exists) return null;
 
-      const myEntry = leaderboardEntries.find(
-        (entry) => entry.wallet === address
-      );
-      setRank(myEntry?.rank ?? null);
-      setAchievements(
-        achievementRows.sort((a, b) => b.awardedAt - a.awardedAt)
-      );
-    } catch (error) {
-      console.error("Failed to load dashboard", error);
-      setEnrolledCourses([]);
-      setRank(null);
-      setAchievements([]);
-    } finally {
-      setLoadingEnrollments(false);
-      setLoadingMeta(false);
-    }
-  }, [activeCourses, address, client, isConnected, ready]);
+              const completed = getCompletedLessonIndices(
+                maybeEnrollment.data.lessonFlags,
+                course.totalLessons
+              );
+              const completedSet = new Set(completed);
+              const completionPercent =
+                course.totalLessons > 0
+                  ? Math.round((completed.length / course.totalLessons) * 100)
+                  : 0;
+
+              return {
+                course,
+                completedLessons: completed.length,
+                completionPercent,
+                nextLesson: nextLessonTitle(course, completedSet),
+                enrolledAt: maybeEnrollment.data.enrolledAt,
+                completedAt: unwrapOption(
+                  maybeEnrollment.data.completedAt,
+                  () => null
+                ),
+              };
+            }
+          )
+        );
+
+        if (signal?.aborted) return;
+
+        const onlyEnrolled = enrollmentRows.flatMap((result) =>
+          result.status === "fulfilled" && result.value !== null
+            ? [result.value]
+            : []
+        );
+
+        onlyEnrolled.sort((a, b) => Number(b.enrolledAt - a.enrolledAt));
+        setEnrolledCourses(onlyEnrolled);
+      } catch (error) {
+        if (signal?.aborted) return;
+        console.error("Failed to load enrollments", error);
+        setEnrolledCourses([]);
+      } finally {
+        if (!signal?.aborted) {
+          setLoadingEnrollments(false);
+        }
+      }
+
+      await loadDashboardMeta(signal);
+    },
+    [activeCourses, address, client, isConnected, loadDashboardMeta, ready]
+  );
 
   useEffect(() => {
-    void loadDashboardData();
+    const controller = new AbortController();
+    void loadDashboardData(controller.signal);
+    return () => controller.abort();
   }, [loadDashboardData]);
 
-  const level = Math.floor(xp / 500) + 1;
-  const levelFloor = (level - 1) * 500;
-  const levelCeiling = level * 500;
-  const levelProgress =
-    xp > 0 ? ((xp - levelFloor) / (levelCeiling - levelFloor)) * 100 : 0;
+  useEffect(() => {
+    if (!isConnected || !address || !ready || !client) return;
 
-  const streakCalendar = useMemo(() => createMockStreakCalendar(), []);
-  const currentStreak = useMemo(
-    () => currentStreakFromCalendar(streakCalendar),
-    [streakCalendar]
-  );
+    const refreshMeta = () => {
+      const controller = new AbortController();
+      void loadDashboardMeta(controller.signal);
+    };
+
+    const onVisibilityOrFocus = () => {
+      if (document.visibilityState === "visible") {
+        refreshMeta();
+      }
+    };
+
+    const intervalId = window.setInterval(
+      refreshMeta,
+      DASHBOARD_META_REFRESH_INTERVAL_MS
+    );
+    window.addEventListener("focus", onVisibilityOrFocus);
+    document.addEventListener("visibilitychange", onVisibilityOrFocus);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", onVisibilityOrFocus);
+      document.removeEventListener("visibilitychange", onVisibilityOrFocus);
+    };
+  }, [address, client, isConnected, loadDashboardMeta, ready]);
+
+  const level = levelFromXp(xp);
+  const levelProgress = levelProgressPercent(xp);
+  const xpToNext = xpToNextLevel(xp);
 
   const recommendedCourses = useMemo(() => {
     const enrolledIds = new Set(enrolledCourses.map((c) => c.course.id));
@@ -296,16 +350,28 @@ export function DashboardPageClient({
               <Skeleton className="h-20 w-full" />
             ) : (
               <>
-                <div className="flex items-end justify-between">
+                <div className="flex items-end justify-between gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground">XP Balance</p>
                     <p className="font-mono text-3xl font-semibold">{xp}</p>
                   </div>
-                  <Badge variant="secondary">Level {level}</Badge>
+                  <div className="flex shrink-0 flex-col items-end">
+                    <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      Level
+                    </span>
+                    <span
+                      className="mt-0.5 font-heading text-2xl font-bold tabular-nums text-primary"
+                      aria-label={`Level ${level}`}
+                    >
+                      {level}
+                    </span>
+                  </div>
                 </div>
                 <Progress value={levelProgress} />
                 <p className="text-xs text-muted-foreground">
-                  {Math.max(levelCeiling - xp, 0)} XP to reach Level {level + 1}
+                  {xpToNext > 0
+                    ? `${xpToNext} XP to reach Level ${level + 1}`
+                    : `Level ${level} complete`}
                 </p>
               </>
             )}
@@ -378,18 +444,33 @@ export function DashboardPageClient({
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <Fire size={18} />
-              Current Streak
+              Streaks
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="mb-3 flex items-center justify-between">
-              <p className="font-mono text-2xl font-semibold">
-                {currentStreak} days
-              </p>
-              <Badge variant="secondary">Mocked calendar</Badge>
+          <CardContent className="space-y-3">
+            <div className="flex flex-wrap items-baseline gap-4">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  Current
+                </p>
+                <p className="font-mono text-2xl font-semibold tabular-nums">
+                  {streakState ? streakState.currentStreak : 0} days
+                </p>
+              </div>
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  Longest
+                </p>
+                <p className="font-mono text-2xl font-semibold tabular-nums">
+                  {streakState ? streakState.longestStreak : 0} days
+                </p>
+              </div>
             </div>
+            <p className="text-xs text-muted-foreground">
+              Complete at least one lesson per day to keep your streak.
+            </p>
             <div className="grid grid-cols-7 gap-1.5">
-              {streakCalendar.map((day) => (
+              {(streakState?.calendarDays ?? []).map((day) => (
                 <div
                   key={day.dateKey}
                   title={day.dateKey}
@@ -401,6 +482,15 @@ export function DashboardPageClient({
                 />
               ))}
             </div>
+            {streakState && streakState.unlockedMilestones.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {streakState.unlockedMilestones.map((m) => (
+                  <Badge key={m} variant="secondary" className="tabular-nums">
+                    {m} day
+                  </Badge>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </section>

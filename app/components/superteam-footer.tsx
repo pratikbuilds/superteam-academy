@@ -33,9 +33,9 @@ export function SuperteamFooter() {
       <div className="pointer-events-none absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_12%_20%,color-mix(in_srgb,var(--primary)_18%,transparent)_0%,transparent_46%)]" />
       <div className="pointer-events-none absolute inset-0 opacity-22 [background-image:linear-gradient(to_right,color-mix(in_srgb,var(--border)_72%,transparent)_1px,transparent_1px),linear-gradient(to_bottom,color-mix(in_srgb,var(--border)_72%,transparent)_1px,transparent_1px)] [background-size:28px_28px]" />
 
-      <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="grid gap-9 lg:grid-cols-[1.45fr_1fr_1fr_1fr]">
-          <div className="max-w-sm">
+      <div className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-[1.45fr_1fr_1fr_1fr] lg:gap-9">
+          <div className="max-w-sm sm:col-span-2 lg:col-span-1">
             <Link
               href="/"
               className="inline-flex"

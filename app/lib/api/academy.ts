@@ -131,7 +131,7 @@ export async function getLeaderboard(): Promise<
   Array<{ rank: number; wallet: string; xp: number }>
 > {
   const res = await fetch(`${getBaseUrl()}/leaderboard`, {
-    next: { revalidate: 60 },
+    cache: "no-store",
   });
   return handleResponse(
     res,
@@ -253,8 +253,12 @@ export type Achievement = {
 };
 
 export async function getAchievements(wallet: string): Promise<Achievement[]> {
-  const res = await fetch(
-    `${getBaseUrl()}/profile/${encodeURIComponent(wallet)}/achievements`
-  );
-  return handleResponse(res, (d) => d as Achievement[]);
+  try {
+    const res = await fetch(
+      `${getBaseUrl()}/profile/${encodeURIComponent(wallet)}/achievements`
+    );
+    return await handleResponse(res, (d) => d as Achievement[]);
+  } catch {
+    return [];
+  }
 }

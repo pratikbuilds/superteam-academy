@@ -69,7 +69,7 @@ async function LeaderboardContent({
       {isDemo && (
         <p className="text-sm text-muted-foreground">{t("demoData")}</p>
       )}
-      <div className="rounded-lg border border-border bg-card">
+      <div className="overflow-x-auto rounded-lg border border-border bg-card">
         <LeaderboardTable entries={entries} formatXp={formatXp} />
       </div>
     </div>
