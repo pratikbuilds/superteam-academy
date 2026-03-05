@@ -37,6 +37,13 @@ import {
   InputGroupTextarea,
 } from "@/components/ui/input-group";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
 import {
   getAchievements,
@@ -279,6 +286,7 @@ export function ProfilePageClient({
   const [github, setGithub] = useState("");
   const [website, setWebsite] = useState("");
   const [isPublic, setIsPublic] = useState(true);
+  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
 
   const isPublicView = publicIdentity !== null;
   const canEdit = !isPublicView && isConnected && !!address;
@@ -367,6 +375,12 @@ export function ProfilePageClient({
   useEffect(() => {
     void loadProfilePage();
   }, [loadProfilePage]);
+
+  useEffect(() => {
+    if (!canEdit || !profile) {
+      setIsEditSheetOpen(false);
+    }
+  }, [canEdit, profile]);
 
   const previewSocials = useMemo(
     () => ({
@@ -486,6 +500,7 @@ export function ProfilePageClient({
 
       setProfile(result.profile);
       hydrateForm(result.profile);
+      setIsEditSheetOpen(false);
       toast.success("Profile saved.");
       await loadProfilePage();
     } catch (saveError) {
@@ -513,6 +528,23 @@ export function ProfilePageClient({
   const hasOnchainActivity =
     achievements.length > 0 || credentials.length > 0 || completed.length > 0;
   const showComposerFirst = canEdit && !profile;
+  const hasExistingProfile = canEdit && !!profile;
+  const profileStats = [
+    { label: "Credentials", value: credentials.length.toString() },
+    { label: "Achievements", value: achievements.length.toString() },
+    { label: "Completed Courses", value: completed.length.toString() },
+  ];
+
+  if (canEdit) {
+    profileStats.unshift({
+      label: "Level",
+      value: xpLoading ? "…" : levelFromXp(xp).toString(),
+    });
+    profileStats.unshift({
+      label: "XP",
+      value: xpLoading ? "…" : xp.toLocaleString(),
+    });
+  }
 
   const profileForm = canEdit ? (
     <Card className="border-border/90 shadow-sm">
@@ -687,10 +719,44 @@ export function ProfilePageClient({
   if (loading) {
     return (
       <main className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6">
-        <div className="grid gap-4 lg:grid-cols-2">
-          <Skeleton className="h-72 w-full rounded-xl" />
-          <Skeleton className="h-72 w-full rounded-xl" />
-        </div>
+        <section className="overflow-hidden rounded-2xl border border-border/80 bg-card px-5 py-5 shadow-sm">
+          <div className="space-y-2">
+            <Skeleton className="h-3 w-28 rounded-full" />
+            <Skeleton className="h-9 w-64 sm:w-80" />
+            <Skeleton className="h-4 w-full max-w-xl" />
+          </div>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div
+                key={`metric-skeleton-${index}`}
+                className="rounded-xl border border-border/70 bg-background/60 px-3 py-2.5"
+              >
+                <Skeleton className="h-3 w-20" />
+                <Skeleton className="mt-2 h-6 w-14" />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-4">
+          <div className="mb-3 space-y-2">
+            <Skeleton className="h-6 w-44" />
+            <Skeleton className="h-4 w-full max-w-md" />
+          </div>
+          <div className="grid items-stretch gap-4 lg:grid-cols-[1.55fr_0.85fr]">
+            <Skeleton className="h-64 w-full rounded-xl" />
+            <Skeleton className="h-64 w-full rounded-xl" />
+          </div>
+        </section>
+
+        <section className="mt-4 space-y-3">
+          <Skeleton className="h-6 w-40" />
+          <div className="grid gap-4 lg:grid-cols-3">
+            <Skeleton className="h-48 w-full rounded-xl" />
+            <Skeleton className="h-48 w-full rounded-xl lg:col-span-2" />
+          </div>
+          <Skeleton className="h-60 w-full rounded-xl" />
+        </section>
       </main>
     );
   }
@@ -712,24 +778,22 @@ export function ProfilePageClient({
               Credentials, achievements, and a clear public card for your work.
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-1.5">
-            {canEdit && (
-              <>
-                <Badge
-                  variant="secondary"
-                  className="font-semibold tabular-nums text-primary"
-                >
-                  Level {xpLoading ? "…" : levelFromXp(xp)}
-                </Badge>
-                <Badge variant="outline">
-                  {xpLoading ? "…" : `${xp.toLocaleString()} XP`}
-                </Badge>
-              </>
-            )}
-            <Badge variant="outline">{credentials.length} Credentials</Badge>
-            <Badge variant="outline">{achievements.length} Achievements</Badge>
-            <Badge variant="outline">{completed.length} Courses</Badge>
-          </div>
+        </div>
+
+        <div className="relative z-10 mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+          {profileStats.map((metric) => (
+            <article
+              key={metric.label}
+              className="rounded-xl border border-border/70 bg-background/70 px-3 py-2.5"
+            >
+              <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+                {metric.label}
+              </p>
+              <p className="mt-1 font-heading text-xl font-bold leading-none text-foreground tabular-nums">
+                {metric.value}
+              </p>
+            </article>
+          ))}
         </div>
       </section>
 
@@ -763,192 +827,239 @@ export function ProfilePageClient({
         <section className="mt-4">{profileForm}</section>
       ) : null}
 
-      <section className="mt-4 grid items-stretch gap-4 lg:grid-cols-[1.55fr_0.85fr]">
-        <Card className="h-full overflow-hidden border-border/80 bg-[linear-gradient(145deg,color-mix(in_srgb,var(--primary)_5%,var(--card)),var(--card))]">
-          <CardContent className="py-4">
-            <div className="flex flex-col gap-3">
-              <div className="flex flex-wrap items-start gap-3">
-                <Avatar data-size="lg" className="size-16 ring-2 ring-border">
-                  {activeProfile.avatarUrl ? (
-                    <AvatarImage
-                      src={activeProfile.avatarUrl}
-                      alt={displayTitle}
-                    />
-                  ) : null}
-                  <AvatarFallback className="text-lg font-semibold">
-                    {displayTitle.slice(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+      <section className="mt-4">
+        <header className="mb-3 flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 className="font-heading text-xl font-bold tracking-tight">
+              Profile Snapshot
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              This is how your profile appears publicly.
+            </p>
+          </div>
+          {hasExistingProfile ? (
+            <Button
+              variant="outline"
+              className="min-w-32"
+              onClick={() => setIsEditSheetOpen(true)}
+            >
+              Edit Profile
+            </Button>
+          ) : null}
+        </header>
 
-                <div className="min-w-0 flex-1 space-y-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="truncate font-heading text-xl font-bold sm:text-2xl">
-                      {displayTitle}
-                    </h2>
-                    {activeProfile.visibility === "public" ? (
-                      <Badge variant="secondary">Public</Badge>
-                    ) : (
-                      <Badge variant="destructive">Private</Badge>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <Badge variant="outline">@{activeProfile.username}</Badge>
-                    <Badge variant="outline">
-                      Joined {formatDate(activeProfile.joinDate)}
-                    </Badge>
-                    {activeProfile.wallet ? (
-                      <Badge variant="outline">
-                        Wallet {shortWallet(activeProfile.wallet)}
-                      </Badge>
+        <div className="grid items-stretch gap-4 lg:grid-cols-[1.55fr_0.85fr]">
+          <Card className="h-full overflow-hidden border-border/80 bg-[linear-gradient(145deg,color-mix(in_srgb,var(--primary)_5%,var(--card)),var(--card))]">
+            <CardContent className="py-4">
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-wrap items-start gap-3">
+                  <Avatar data-size="lg" className="size-16 ring-2 ring-border">
+                    {activeProfile.avatarUrl ? (
+                      <AvatarImage
+                        src={activeProfile.avatarUrl}
+                        alt={displayTitle}
+                      />
                     ) : null}
-                  </div>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {activeProfile.bio?.trim() ||
-                      "Add a short bio so people quickly understand what you build."}
-                  </p>
-                </div>
-              </div>
+                    <AvatarFallback className="text-lg font-semibold">
+                      {displayTitle.slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
 
-              <div className="mt-1 flex flex-wrap gap-2">
-                {(Object.keys(activeSocials) as (keyof SocialLinks)[])
-                  .filter((key) => !!activeSocials[key])
-                  .map((key) => {
-                    const Icon = socialIconFor(key);
-                    return (
-                      <a
-                        key={key}
-                        href={activeSocials[key]}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background/80 px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                      >
-                        <Icon className="size-3.5" />
-                        {key}
-                      </a>
-                    );
-                  })}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="h-full overflow-hidden border-border/80">
-          <CardHeader className="pb-1">
-            <CardTitle className="text-sm">Skill Radar</CardTitle>
-            <CardDescription>
-              Skill signal from completed tracks and credentials.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex h-full flex-col space-y-2 pb-3">
-            <div className="flex h-40 items-center justify-center rounded-xl border border-border/70 bg-muted/20 py-1">
-              <RadarChart scores={scores} />
-            </div>
-            <div className="grid grid-cols-3 gap-1.5">
-              {radarSkills.map((skill, index) => (
-                <div
-                  key={`mini-${skill}`}
-                  className="rounded-md border border-border/70 bg-background/70 px-2 py-1"
-                >
-                  <div className="flex items-center justify-between text-[10px] leading-tight">
-                    <span className="text-muted-foreground">{skill}</span>
-                    <span className="font-semibold text-foreground">
-                      {scores[index]}
-                    </span>
+                  <div className="min-w-0 flex-1 space-y-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="truncate font-heading text-xl font-bold sm:text-2xl">
+                        {displayTitle}
+                      </h2>
+                      {activeProfile.visibility === "public" ? (
+                        <Badge variant="secondary">Public</Badge>
+                      ) : (
+                        <Badge variant="destructive">Private</Badge>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <Badge variant="outline">@{activeProfile.username}</Badge>
+                      <Badge variant="outline">
+                        Joined {formatDate(activeProfile.joinDate)}
+                      </Badge>
+                      {activeProfile.wallet ? (
+                        <Badge variant="outline">
+                          Wallet {shortWallet(activeProfile.wallet)}
+                        </Badge>
+                      ) : null}
+                    </div>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {activeProfile.bio?.trim() ||
+                        "Add a short bio so people quickly understand what you build."}
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+
+                <div className="mt-1 flex flex-wrap gap-2">
+                  {(Object.keys(activeSocials) as (keyof SocialLinks)[])
+                    .filter((key) => !!activeSocials[key])
+                    .map((key) => {
+                      const Icon = socialIconFor(key);
+                      return (
+                        <a
+                          key={key}
+                          href={activeSocials[key]}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background/80 px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                        >
+                          <Icon className="size-3.5" />
+                          {key}
+                        </a>
+                      );
+                    })}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="h-full overflow-hidden border-border/80">
+            <CardHeader className="pb-1">
+              <CardTitle className="text-base">Skill Radar</CardTitle>
+              <CardDescription>
+                Skill signal from completed tracks and credentials.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex h-full flex-col space-y-2 pb-3">
+              <div className="flex h-40 items-center justify-center rounded-xl border border-border/70 bg-muted/20 py-1">
+                <RadarChart scores={scores} />
+              </div>
+              <div className="grid grid-cols-3 gap-1.5">
+                {radarSkills.map((skill, index) => (
+                  <div
+                    key={`mini-${skill}`}
+                    className="rounded-md border border-border/70 bg-background/70 px-2 py-1"
+                  >
+                    <div className="flex items-center justify-between text-[10px] leading-tight">
+                      <span className="text-muted-foreground">{skill}</span>
+                      <span className="font-semibold text-foreground">
+                        {scores[index]}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </section>
 
-      {!showComposerFirst ? (
-        <section className="mt-4">{profileForm}</section>
+      {hasExistingProfile ? (
+        <Sheet open={isEditSheetOpen} onOpenChange={setIsEditSheetOpen}>
+          <SheetContent className="w-full max-w-2xl overflow-y-auto p-4 sm:w-full">
+            <SheetHeader className="sr-only">
+              <SheetTitle>Edit Profile</SheetTitle>
+              <SheetDescription>
+                Update your public profile details and links.
+              </SheetDescription>
+            </SheetHeader>
+            {profileForm}
+          </SheetContent>
+        </Sheet>
       ) : null}
 
       {hasOnchainActivity || isPublicView ? (
         <>
-          <section className="mt-4 grid gap-4 lg:grid-cols-3">
-            <Card className="lg:col-span-1">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-sm">
-                  <Trophy className="size-4 text-primary" />
-                  Achievement Badges
-                </CardTitle>
-                <CardDescription>
-                  Verified badges earned by this builder.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {achievements.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
-                    No achievements yet.
-                  </p>
-                ) : (
-                  achievements.map((achievement) => (
-                    <article
-                      key={`${achievement.asset}-${achievement.achievementId}`}
-                      className="rounded-lg border border-border/80 bg-background/60 p-3"
-                    >
-                      <p className="text-sm font-medium">{achievement.name}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        Awarded{" "}
-                        {formatDate(
-                          new Date(achievement.awardedAt * 1000).toISOString()
-                        )}
-                      </p>
-                    </article>
-                  ))
-                )}
-              </CardContent>
-            </Card>
+          <section className="mt-4">
+            <header className="mb-3">
+              <h2 className="font-heading text-xl font-bold tracking-tight">
+                On-Chain Activity
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Credentials, achievements, and course progress verified on
+                Solana.
+              </p>
+            </header>
 
-            <Card className="lg:col-span-2">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-sm">
-                  <SealCheck className="size-4 text-primary" />
-                  On-Chain Credentials (cNFTs)
-                </CardTitle>
-                <CardDescription>
-                  Evolving credentials with track, level, and verification
-                  links.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-3 sm:grid-cols-2">
-                {credentials.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
-                    No credential cNFTs minted yet.
-                  </p>
-                ) : (
-                  credentials.map((credential) => (
-                    <article
-                      key={credential.asset}
-                      className="rounded-lg border border-border/80 bg-background/60 p-3"
-                    >
-                      <p className="text-sm font-medium">
-                        {getTrackLabel(credential.trackId)}
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        Level {credential.trackLevel}
-                      </p>
-                      <a
-                        href={credential.verificationLink}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="mt-2 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+            <div className="grid gap-4 lg:grid-cols-3">
+              <Card className="lg:col-span-1">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Trophy className="size-4 text-primary" />
+                    Achievement Badges
+                  </CardTitle>
+                  <CardDescription>
+                    Verified badges earned by this builder.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {achievements.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      No achievements yet.
+                    </p>
+                  ) : (
+                    achievements.map((achievement) => (
+                      <article
+                        key={`${achievement.asset}-${achievement.achievementId}`}
+                        className="rounded-lg border border-border/80 bg-background/60 p-3"
                       >
-                        Verify credential <ArrowSquareOut className="size-3" />
-                      </a>
-                    </article>
-                  ))
-                )}
-              </CardContent>
-            </Card>
+                        <p className="text-sm font-medium">
+                          {achievement.name}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Awarded{" "}
+                          {formatDate(
+                            new Date(achievement.awardedAt * 1000).toISOString()
+                          )}
+                        </p>
+                      </article>
+                    ))
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="lg:col-span-2">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <SealCheck className="size-4 text-primary" />
+                    On-Chain Credentials (cNFTs)
+                  </CardTitle>
+                  <CardDescription>
+                    Evolving credentials with track, level, and verification
+                    links.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="grid gap-3 sm:grid-cols-2">
+                  {credentials.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      No credential cNFTs minted yet.
+                    </p>
+                  ) : (
+                    credentials.map((credential) => (
+                      <article
+                        key={credential.asset}
+                        className="rounded-lg border border-border/80 bg-background/60 p-3"
+                      >
+                        <p className="text-sm font-medium">
+                          {getTrackLabel(credential.trackId)}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Level {credential.trackLevel}
+                        </p>
+                        <a
+                          href={credential.verificationLink}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="mt-2 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                        >
+                          Verify credential{" "}
+                          <ArrowSquareOut className="size-3" />
+                        </a>
+                      </article>
+                    ))
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </section>
 
           <Card className="mt-4">
             <CardHeader>
-              <CardTitle className="text-sm">Completed Courses</CardTitle>
+              <CardTitle className="text-base">Completed Courses</CardTitle>
               <CardDescription>
                 Course completions with track level and credential asset links.
               </CardDescription>

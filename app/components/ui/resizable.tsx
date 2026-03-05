@@ -33,7 +33,7 @@ function ResizablePanel({
     <Panel
       defaultSize={defaultSize}
       minSize={minSize ?? "30%"}
-      className={cn("overflow-hidden", className)}
+      className={cn("min-h-0 min-w-0 overflow-hidden", className)}
       {...props}
     />
   );
@@ -49,19 +49,19 @@ function ResizableHandle({
   return (
     <Separator
       className={cn(
-        "relative flex w-px shrink-0 cursor-col-resize touch-none items-center justify-center bg-border/60 transition-colors after:absolute after:inset-y-0 after:left-1/2 after:w-3 after:-translate-x-1/2 hover:bg-primary/25 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring data-[separator=hover]:bg-primary/25 data-[separator=active]:bg-primary/45",
+        "relative flex w-px shrink-0 cursor-col-resize touch-none items-center justify-center bg-border/60 transition-colors after:absolute after:inset-y-0 after:left-1/2 after:w-3 after:-translate-x-1/2 hover:bg-primary/25 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring data-[separator=hover]:bg-primary/25 data-[separator=active]:bg-primary/45 data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:cursor-row-resize data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:top-1/2 data-[panel-group-direction=vertical]:after:h-3 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0",
         className
       )}
       {...props}
     >
       {withHandle && (
-        <div className="z-10 flex h-6 w-3.5 items-center justify-center rounded-sm bg-muted-foreground/20 transition-colors hover:bg-muted-foreground/30">
+        <div className="z-10 flex h-6 w-3.5 items-center justify-center rounded-sm bg-muted-foreground/20 transition-colors hover:bg-muted-foreground/30 data-[panel-group-direction=vertical]:h-3.5 data-[panel-group-direction=vertical]:w-6">
           <svg
             width="6"
             height="14"
             viewBox="0 0 6 14"
             fill="none"
-            className="text-muted-foreground/60"
+            className="text-muted-foreground/60 data-[panel-group-direction=vertical]:rotate-90"
           >
             <circle cx="1.5" cy="3" r="1" fill="currentColor" />
             <circle cx="4.5" cy="3" r="1" fill="currentColor" />

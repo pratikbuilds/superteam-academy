@@ -27,6 +27,7 @@ type Props = {
 export function ChallengeLessonView({ course, lesson, lessonContext }: Props) {
   const t = useTranslations("lessonView");
   const isMd = useMediaQuery("(min-width: 768px)");
+  const panelDirection = isMd ? "horizontal" : "vertical";
   const { isComplete, markComplete, isMarkingComplete, connected, enrolled } =
     useLessonCompletion(course.id, course.totalLessons);
   const [allTestsPassed, setAllTestsPassed] = useState(false);
@@ -43,14 +44,15 @@ export function ChallengeLessonView({ course, lesson, lessonContext }: Props) {
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-border">
       <ResizablePanelGroup
-        direction={isMd ? "horizontal" : "vertical"}
+        key={panelDirection}
+        direction={panelDirection}
         className="min-h-0 flex-1"
       >
         {/* Instructions panel — left on md+, top on mobile */}
         <ResizablePanel
-          defaultSize={isMd ? 42 : 45}
-          minSize={isMd ? 34 : 30}
-          maxSize={isMd ? 58 : 70}
+          defaultSize={isMd ? "44%" : "45%"}
+          minSize={isMd ? "36%" : "30%"}
+          maxSize={isMd ? "60%" : "70%"}
         >
           <div className="flex h-full min-w-0 flex-col bg-card">
             {/* Header */}
@@ -65,7 +67,7 @@ export function ChallengeLessonView({ course, lesson, lessonContext }: Props) {
 
             {/* Scrollable body — min-w-0 so flex doesn't overflow */}
             <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden">
-              <div className="space-y-4 px-4 py-3 text-[13px] leading-relaxed text-card-foreground/90 wrap-break-word">
+              <div className="space-y-4 px-4 py-3 text-[13px] leading-relaxed text-card-foreground/90 break-words">
                 <LessonMarkdown content={lesson.prompt} />
 
                 <div className="rounded-md border border-primary/20 bg-primary/5 px-4 py-3">
@@ -149,7 +151,7 @@ export function ChallengeLessonView({ course, lesson, lessonContext }: Props) {
         <ResizableHandle withHandle />
 
         {/* Editor panel — right on md+, bottom on mobile */}
-        <ResizablePanel defaultSize={isMd ? 58 : 55} minSize={isMd ? 42 : 30}>
+        <ResizablePanel defaultSize={isMd ? "56%" : "55%"} minSize={isMd ? "40%" : "30%"}>
           <ChallengeEditorPanel
             lesson={lesson}
             onAllTestsPass={() => setAllTestsPassed(true)}

@@ -81,10 +81,10 @@ function SheetContent({
         {showCloseButton && (
           <DialogPrimitive.Close asChild>
             <Button
-              variant="ghost"
-              size="icon-sm"
-              className="absolute top-3 right-3"
-              aria-label="Close menu"
+              variant="outline"
+              size="icon"
+              className="absolute top-4 right-4 z-10 rounded-full border-border/70 bg-background/85 shadow-sm backdrop-blur-sm hover:bg-background"
+              aria-label="Close panel"
             >
               <XIcon className="size-4" />
             </Button>
